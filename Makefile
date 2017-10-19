@@ -1,4 +1,3 @@
-PWD = $(shell pwd)
 DOCKER := docker run -it --rm -v "${PWD}/src:/src" 15-puzzle-go
 
 help: ## Print all commands (default)
