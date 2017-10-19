@@ -6,7 +6,7 @@ A CLI tool to play the 15-puzzle game, in Go.
 
 ### Help
 
-Print all commands available
+Print all available commands
 
 ``` bash
 make
