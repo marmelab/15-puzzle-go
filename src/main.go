@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./renderer"
+	"renderer"
 	"fmt"
 )
 
