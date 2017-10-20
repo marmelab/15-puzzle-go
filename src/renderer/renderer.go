@@ -1,8 +1,8 @@
 package renderer
 
 import (
-	"game"
 	"fmt"
+	"game"
 )
 
 func Hello() string {
