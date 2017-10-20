@@ -97,6 +97,41 @@ func ListMovableTiles(grid Grid) []Coords {
 	return coordsMovableTiles
 }
 
+func CoordsFromDirection(grid Grid, dir rune) (Coords, error) {
+	var coordsMovableTiles Coords
+
+	coordsEmptyTile, err := findEmptyTile(grid)
+	if err != nil {
+		return coordsEmptyTile, err
+	}
+
+	size := byte(len(grid))
+
+	if dir == 's' || dir == 'S' {
+		if coordsEmptyTile.y-1 >= 0 {
+			coordsMovableTiles.y = coordsEmptyTile.y - 1
+			coordsMovableTiles.x = coordsEmptyTile.x
+		}
+	} else if dir == 'q' || dir == 'Q' {
+		if coordsEmptyTile.x+1 < size {
+			coordsMovableTiles.y = coordsEmptyTile.y
+			coordsMovableTiles.x = coordsEmptyTile.x + 1
+		}
+	} else if dir == 'z' || dir == 'Z' {
+		if coordsEmptyTile.y+1 < size {
+			coordsMovableTiles.y = coordsEmptyTile.y + 1
+			coordsMovableTiles.x = coordsEmptyTile.x
+		}
+	} else if dir == 'd' || dir == 'D' {
+		if coordsEmptyTile.x-1 >= 0 {
+			coordsMovableTiles.y = coordsEmptyTile.y
+			coordsMovableTiles.x = coordsEmptyTile.x - 1
+		}
+	}
+
+	return coordsMovableTiles, nil
+}
+
 func isTileInMovableTiles(grid Grid, coordsTileToMove Coords) bool {
 	for _, value := range ListMovableTiles(grid) {
 		if AreCoordsEquals(value, coordsTileToMove) {
