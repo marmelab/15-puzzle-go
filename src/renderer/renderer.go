@@ -2,14 +2,14 @@ package renderer
 
 import (
 	"game"
-	"strconv"
+	"fmt"
 )
 
 func Hello() string {
 	return "Welcome to the 15 puzzle game.\n"
 }
 
-func BuildLine(startSymb string, stopSymb string, sepSymb string, tileSize int) string {
+func DrawLine(startSymb string, stopSymb string, sepSymb string, tileSize int) string {
 	line := "\n" + startSymb
 
 	tileLine := "────"
@@ -26,29 +26,29 @@ func BuildLine(startSymb string, stopSymb string, sepSymb string, tileSize int) 
 	return line
 }
 
-func BuildGrid(grid game.Grid) string {
+func DrawGrid(grid game.Grid) string {
 	size := len(grid)
 
-	horizontalLine := BuildLine("├", "┤", "┼", size)
-	firstHorizontalLine := BuildLine("┌", "┐", "┬", size)
-	lastHorizontalLine := BuildLine("└", "┘", "┴", size)
+	horizontalLine := DrawLine("├", "┤", "┼", size)
+	firstHorizontalLine := DrawLine("┌", "┐", "┬", size)
+	lastHorizontalLine := DrawLine("└", "┘", "┴", size)
 
 	gridToShow := firstHorizontalLine
 
-	var tile_str string
+	var tileStr string
 
 	for i := 0; i < size; i++ {
 		gridToShow += "│"
 		for j := 0; j < size; j++ {
 			tile := grid[i][j]
 			if tile > 0 && tile < 10 {
-				tile_str = "  " + strconv.Itoa(tile) + " │"
+				tileStr = fmt.Sprintf("  %d │", tile)
 			} else if tile == 0 {
-				tile_str = "    │"
+				tileStr = "    │"
 			} else {
-				tile_str = " " + strconv.Itoa(tile) + " │"
+				tileStr = fmt.Sprintf(" %d │", tile)
 			}
-			gridToShow += tile_str
+			gridToShow += tileStr
 		}
 		if i != size-1 {
 			gridToShow += horizontalLine

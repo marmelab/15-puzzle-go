@@ -18,5 +18,5 @@ func main() {
 	clearTerminal()
 	fmt.Println(renderer.Hello())
 	grid := game.BuildGrid(4)
-	fmt.Println(renderer.BuildGrid(grid))
+	fmt.Println(renderer.DrawGrid(grid))
 }

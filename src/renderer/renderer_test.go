@@ -15,7 +15,7 @@ func TestHelloReturn(t *testing.T) {
 	}
 }
 
-func TestBuildGrid(t *testing.T) {
+func TestDrawGrid(t *testing.T) {
 	expectedGridRendered := `
 ┌────┬────┬────┬────┐
 │  1 │  2 │  3 │  4 │
@@ -28,7 +28,7 @@ func TestBuildGrid(t *testing.T) {
 └────┴────┴────┴────┘
 `
 
-	gridRendered := BuildGrid(game.BuildGrid(4))
+	gridRendered := DrawGrid(game.BuildGrid(4))
 
 	if expectedGridRendered != gridRendered {
 		t.Error("The grid layout is not corresponding to expected one")
@@ -44,7 +44,7 @@ func TestBuildGrid(t *testing.T) {
 └────┴────┴────┘
 `
 
-	gridRendered2 := BuildGrid(game.BuildGrid(3))
+	gridRendered2 := DrawGrid(game.BuildGrid(3))
 
 	if expectedGridRendered2 != gridRendered2 {
 		t.Error("The grid layout is not corresponding to expected one")

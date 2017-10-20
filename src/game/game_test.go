@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestAreGridEquals(t *testing.T) {
+func TestAreGridsEquals(t *testing.T) {
 	grid := Grid {
 		{1, 2, 3},
 		{4, 5, 6},
@@ -15,27 +15,42 @@ func TestAreGridEquals(t *testing.T) {
 		{4, 5, 6},
 		{7, 8, 0},
 	}
-	grid3 := Grid{
+
+	if !AreGridsEquals(grid, grid2) {
+		t.Error("The grids should be equals by value and size")
+	}
+}
+
+func TestAreGridsNotEqualsBySize(t *testing.T) {
+	grid := Grid {
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0},
+	}
+	grid2 := Grid{
 		{1, 2, 3, 4},
 		{5, 6, 7, 8},
 		{9, 10, 11, 12},
 		{13, 14, 15, 0},
 	}
-	grid4 := Grid{
+
+	if AreGridsEquals(grid, grid2) {
+		t.Error("The grids should ne be equals due to their size")
+	}
+}
+
+func TestAreGridsNotEqualsByValue(t *testing.T) {
+	grid := Grid {
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0},
+	}
+	grid2 := Grid{
 		{3, 2, 1},
 		{4, 5, 6},
 		{7, 8, 0},
 	}
-
-	if !AreGridEquals(grid, grid2) {
-		t.Error("The grids should be equals by value and size")
-	}
-
-	if AreGridEquals(grid, grid3) {
-		t.Error("The grids should ne be equals due to their size")
-	}
-
-	if AreGridEquals(grid, grid4) {
+	if AreGridsEquals(grid, grid2) {
 		t.Error("The grids should ne be equals due to their values")
 	}
 }
@@ -49,7 +64,7 @@ func TestBuild(t *testing.T) {
 		{7, 8, 0},
 	}
 
-	if !AreGridEquals(grid, expectedGrid) {
+	if !AreGridsEquals(grid, expectedGrid) {
 		t.Error("The grid is not built as expected")
 	}
 }
