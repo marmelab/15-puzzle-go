@@ -27,7 +27,7 @@ func BuildLine(startSymb string, stopSymb string, sepSymb string, tileSize int) 
 }
 
 func BuildGrid(grid game.Grid) string {
-	size := grid.Size
+	size := len(grid)
 
 	horizontalLine := BuildLine("├", "┤", "┼", size)
 	firstHorizontalLine := BuildLine("┌", "┐", "┬", size)
@@ -40,7 +40,7 @@ func BuildGrid(grid game.Grid) string {
 	for i := 0; i < size; i++ {
 		gridToShow += "│"
 		for j := 0; j < size; j++ {
-			tile := grid.Data[i][j]
+			tile := grid[i][j]
 			if tile > 0 && tile < 10 {
 				tile_str = "  " + strconv.Itoa(tile) + " │"
 			} else if tile == 0 {

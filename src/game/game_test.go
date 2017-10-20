@@ -5,40 +5,26 @@ import (
 )
 
 func TestAreGridEquals(t *testing.T) {
-	grid := Grid{
-		Data: [][]int{
-			{1, 2, 3},
-			{4, 5, 6},
-			{7, 8, 0},
-		},
-		Size: 3,
+	grid := Grid {
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0},
 	}
-
 	grid2 := Grid{
-		Data: [][]int{
-			{1, 2, 3},
-			{4, 5, 6},
-			{7, 8, 0},
-		},
-		Size: 3,
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0},
 	}
-
 	grid3 := Grid{
-		Data: [][]int{
-			{1, 2, 3},
-			{4, 5, 6},
-			{7, 8, 0},
-		},
-		Size: 2,
+		{1, 2, 3, 4},
+		{5, 6, 7, 8},
+		{9, 10, 11, 12},
+		{13, 14, 15, 0},
 	}
-
 	grid4 := Grid{
-		Data: [][]int{
-			{3, 2, 1},
-			{4, 5, 6},
-			{7, 8, 0},
-		},
-		Size: 3,
+		{3, 2, 1},
+		{4, 5, 6},
+		{7, 8, 0},
 	}
 
 	if !AreGridEquals(grid, grid2) {
@@ -58,12 +44,9 @@ func TestBuild(t *testing.T) {
 	grid := BuildGrid(3)
 
 	expectedGrid := Grid{
-		Data: [][]int{
-			{1, 2, 3},
-			{4, 5, 6},
-			{7, 8, 0},
-		},
-		Size: 3,
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0},
 	}
 
 	if !AreGridEquals(grid, expectedGrid) {

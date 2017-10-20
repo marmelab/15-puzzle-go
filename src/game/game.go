@@ -1,18 +1,15 @@
 package game
 
-type Grid struct {
-	Data [][]int
-	Size int
-}
+type Grid [][]int
 
 func AreGridEquals(grid Grid, grid2 Grid) bool {
-	if grid.Size != grid2.Size {
+	if len(grid) != len(grid2) {
 		return false
 	}
-	size := grid.Size
+	size := len(grid)
 	for i := 0; i < size; i++ {
 		for j := 0; j < size; j++ {
-			if grid.Data[i][j] != grid2.Data[i][j] {
+			if grid[i][j] != grid2[i][j] {
 				return false
 			}
 		}
@@ -22,22 +19,18 @@ func AreGridEquals(grid Grid, grid2 Grid) bool {
 
 func BuildGrid(size int) Grid {
 	value := 0
-	data := make([][]int, size)
+	grid := make([][]int, size)
 
 	for i := 0; i < size; i++ {
-		data[i] = make([]int, size)
+		grid[i] = make([]int, size)
 		for j := 0; j < size; j++ {
 			value++
 			if value == size*size {
-				data[i][j] = 0
+				grid[i][j] = 0
 			} else {
-				data[i][j] = value
+				grid[i][j] = value
 			}
 		}
 	}
-
-	return Grid{
-		Data: data,
-		Size: size,
-	}
+	return grid
 }
