@@ -2,14 +2,15 @@ package game
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 )
 
 type Grid [][]byte
 
 type Coords struct {
-	y int
-	x int
+	y byte
+	x byte
 }
 
 const EMPTY_VALUE byte = 0
@@ -19,14 +20,7 @@ func AreGridsEquals(grid Grid, grid2 Grid) bool {
 }
 
 func AreCoordsEquals(coords Coords, coords2 Coords) bool {
-	if coords.x == coords2.x && coords.y == coords2.y {
-		return true
-	}
-	return false
-}
-
-func IsGridResolved(grid Grid, startedGrid Grid) bool {
-	return AreGridsEquals(grid, startedGrid)
+	return reflect.DeepEqual(coords, coords2)
 }
 
 func BuildGrid(size byte) Grid {
@@ -38,7 +32,7 @@ func BuildGrid(size byte) Grid {
 		for x := byte(0); x < size; x++ {
 			value++
 			if value == size*size {
-				grid[y][x] = 0
+				grid[y][x] = EMPTY_VALUE
 			} else {
 				grid[y][x] = value
 			}
@@ -58,11 +52,11 @@ func DeepCopyGrid(grid Grid) Grid {
 
 func findTileByValue(grid Grid, value byte) (Coords, error) {
 	var tile Coords
-	size := len(grid)
-	y := 0
+	size := byte(len(grid))
+	y := byte(0)
 	for y < size {
-		x := 0
-		for x < len(grid[y]) {
+		x := byte(0)
+		for x < byte(len(grid[y])) {
 			if grid[y][x] == value {
 				tile.y = y
 				tile.x = x
@@ -87,7 +81,7 @@ func ListMovableTiles(grid Grid) []Coords {
 		return coordsMovableTiles
 	}
 
-	size := len(grid)
+	size := byte(len(grid))
 	if coordsEmptyTile.y-1 >= 0 {
 		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.y - 1, coordsEmptyTile.x})
 	}
@@ -112,13 +106,9 @@ func isTileInMovableTiles(grid Grid, coordsTileToMove Coords) bool {
 	return false
 }
 
-func ValueFromCoords(grid Grid, coords Coords) byte {
-	return grid[coords.y][coords.x]
-}
-
 func Move(grid Grid, coordsTileToMove Coords) (Grid, error) {
 	if !isTileInMovableTiles(grid, coordsTileToMove) {
-		return grid, errors.New("The tile is not movable")
+		return grid, errors.New(fmt.Sprintf("The tile ate coords (%d, %d) is not movable", coordsTileToMove.y, coordsTileToMove.y))
 	}
 
 	emptyCoords, err := findEmptyTile(grid)
@@ -132,8 +122,7 @@ func Move(grid Grid, coordsTileToMove Coords) (Grid, error) {
 	}
 
 	newGrid := DeepCopyGrid(grid)
-	newGrid[emptyCoords.y][emptyCoords.x] = grid[newCoords.y][newCoords.x]
-	newGrid[newCoords.y][newCoords.x] = grid[emptyCoords.y][emptyCoords.x]
+	newGrid[emptyCoords.y][emptyCoords.x], newGrid[newCoords.y][newCoords.x] = grid[newCoords.y][newCoords.x], grid[emptyCoords.y][emptyCoords.x]
 	return newGrid, nil
 }
 

@@ -102,42 +102,6 @@ func TestAreCoordsNotEqualsX(t *testing.T) {
 	}
 }
 
-// Function IsGridResolved
-
-func TestIsGridResolved(t *testing.T) {
-	grid := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-	startedGrid := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-
-	if !IsGridResolved(grid, startedGrid) {
-		t.Error("The grid should be resolved")
-	}
-}
-
-func TestIsGridNotResolved(t *testing.T) {
-	grid := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-	startedGrid := Grid{
-		{1, 2, 3},
-		{4, 5, 0},
-		{7, 8, 6},
-	}
-
-	if IsGridResolved(grid, startedGrid) {
-		t.Error("The grid should not be resolved")
-	}
-}
-
 // Function Build
 
 func TestBuild(t *testing.T) {
@@ -163,8 +127,8 @@ func TestListMovableTiles(t *testing.T) {
 		{7, 8, 0},
 	}
 	list := ListMovableTiles(grid)
-	expectedValue := ValueFromCoords(grid, list[0])
-	expectedValue2 := ValueFromCoords(grid, list[1])
+	expectedValue := grid[list[0].y][list[0].x]
+	expectedValue2 := grid[list[1].y][list[1].x]
 	if expectedValue != 6 || expectedValue2 != 8 {
 		t.Error(fmt.Sprintf("The movable tiles should be 6 and 8 and not %d and %d", expectedValue, expectedValue2))
 	}
