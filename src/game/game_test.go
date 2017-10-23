@@ -5,8 +5,6 @@ import (
 	"testing"
 )
 
-// Function AreGridsEquals
-
 func TestAreGridsEquals(t *testing.T) {
 	grid := Grid{
 		{1, 2, 3},
@@ -58,8 +56,6 @@ func TestAreGridsNotEqualsByValue(t *testing.T) {
 	}
 }
 
-// Function AreCoordsEquals
-
 func TestAreCoordsEquals(t *testing.T) {
 	coords := Coords{
 		y: 3,
@@ -102,8 +98,6 @@ func TestAreCoordsNotEqualsX(t *testing.T) {
 	}
 }
 
-// Function Build
-
 func TestBuild(t *testing.T) {
 	grid := BuildGrid(3)
 
@@ -118,8 +112,6 @@ func TestBuild(t *testing.T) {
 	}
 }
 
-// Function ListMovableTiles
-
 func TestListMovableTiles(t *testing.T) {
 	grid := Grid{
 		{1, 2, 3},
@@ -133,8 +125,6 @@ func TestListMovableTiles(t *testing.T) {
 		t.Error(fmt.Sprintf("The movable tiles should be 6 and 8 and not %d and %d", expectedValue, expectedValue2))
 	}
 }
-
-// Function CoordsFromDirection
 
 func TestCoordsFromDirection(t *testing.T) {
 	grid := Grid{
@@ -165,8 +155,6 @@ func TestCoordsFromDirectionNotValid(t *testing.T) {
 		t.Error(fmt.Printf("The function should return an error because the direction is not valid"))				
 	}
 }
-
-// Function Move
 
 func TestMove(t *testing.T) {
 	grid := Grid{
