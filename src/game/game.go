@@ -152,7 +152,7 @@ func isTileInMovableTiles(grid Grid, coordsTileToMove Coords) bool {
 
 func Move(grid Grid, coordsTileToMove Coords) (Grid, error) {
 	if !isTileInMovableTiles(grid, coordsTileToMove) {
-		return grid, errors.New(fmt.Sprintf("The tile ate coords (%d, %d) is not movable", coordsTileToMove.y, coordsTileToMove.y))
+		return grid, errors.New(fmt.Sprintf("The tile at coords (%d, %d) is not movable", coordsTileToMove.y, coordsTileToMove.y))
 	}
 
 	emptyCoords, err := findEmptyTile(grid)
