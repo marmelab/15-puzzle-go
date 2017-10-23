@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 	"game"
-	"time"
+	"github.com/nsf/termbox-go"
 	"os"
 	"os/exec"
 	"os/signal"
+	"reflect"
 	"renderer"
 	"syscall"
-	"github.com/nsf/termbox-go"
-	
+	"time"
 )
 
 func clearTerminal() {
@@ -21,37 +21,35 @@ func clearTerminal() {
 
 func KeyListener(inputChan chan rune, doneChan chan bool) {
 	for {
-		event := termbox.PollEvent()	
+		event := termbox.PollEvent()
 
-		switch event.Type {				
-			case termbox.EventKey:
-				switch event.Key {
-					case termbox.KeyCtrlC:
-						doneChan <- false
-						break	
-					case termbox.KeyEsc:
-						doneChan <- false
-						break
-					case termbox.KeyArrowUp:
-						inputChan <- 'Z'
-						break
-					case termbox.KeyArrowRight:
-						inputChan <- 'D'
-						break
-					case termbox.KeyArrowDown:
-						inputChan <- 'S'					
-						break
-					case termbox.KeyArrowLeft:
-						inputChan <- 'Q'					
-						break
-					default:
-						inputChan <- event.Ch
-				}
-			case termbox.EventError:
-				panic(event.Err)
-			case termbox.EventInterrupt:
+		switch event.Type {
+		case termbox.EventKey:
+			switch event.Key {
+			case termbox.KeyCtrlC:
 				doneChan <- false
+				break
+			case termbox.KeyEsc:
+				doneChan <- false
+				break
+			case termbox.KeyArrowUp:
+				inputChan <- 'Z'
+				break
+			case termbox.KeyArrowRight:
+				inputChan <- 'D'
+				break
+			case termbox.KeyArrowDown:
+				inputChan <- 'S'
+				break
+			case termbox.KeyArrowLeft:
+				inputChan <- 'Q'
+				break
+			default:
+				inputChan <- event.Ch
 			}
+		case termbox.EventError:
+			panic(event.Err)
+		}
 	}
 }
 
@@ -86,7 +84,7 @@ func GameListener(doneChan chan bool, inputChan chan rune, gridChan chan game.Gr
 			continue
 		}
 		grid = newGrid
-		if game.AreGridsEquals(grid, startedGrid) {
+		if reflect.DeepEqual(grid, startedGrid) {
 			doneChan <- true
 		}
 		gridChan <- newGrid
@@ -120,6 +118,12 @@ func main() {
 	if success {
 		fmt.Println("\nGGWP, you solved the puzzle!")
 	}
+
+	close(interruptChan)
+	close(doneChan)
+	close(inputChan)
+	close(gridChan)
+
 	fmt.Println("\nSee you soon :)")
 	os.Exit(0)
 }
