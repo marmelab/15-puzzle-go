@@ -134,6 +134,40 @@ func TestListMovableTiles(t *testing.T) {
 	}
 }
 
+// Function CoordsFromDirection
+
+func TestCoordsFromDirection(t *testing.T) {
+	grid := Grid{
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0},
+	}
+	expectedCoords := Coords{
+		y: 1,
+		x: 2,
+	}
+	coords, err := CoordsFromDirection(grid, 'S')
+	if !AreCoordsEquals(coords, expectedCoords) {
+		t.Error(fmt.Sprintf("The coords should be equal to { y: %d, x: %d}", expectedCoords.y, expectedCoords.x))		
+	} else if err != nil {
+		t.Error(fmt.Sprintf("The function should not return an error"))				
+	}
+}
+
+func TestCoordsFromDirectionNotValid(t *testing.T) {
+	grid := Grid{
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0},
+	}
+	_, err := CoordsFromDirection(grid, 'Z')
+	if err == nil {
+		t.Error(fmt.Printf("The function should return an error because the direction is not valid"))				
+	}
+}
+
+// Function Move
+
 func TestMove(t *testing.T) {
 	grid := Grid{
 		{1, 2, 3},

@@ -82,7 +82,7 @@ func ListMovableTiles(grid Grid) []Coords {
 	}
 
 	size := byte(len(grid))
-	if coordsEmptyTile.y-1 >= 0 {
+	if coordsEmptyTile.y-1 != 255 {
 		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.y - 1, coordsEmptyTile.x})
 	}
 	if coordsEmptyTile.x+1 < size {
@@ -91,7 +91,7 @@ func ListMovableTiles(grid Grid) []Coords {
 	if coordsEmptyTile.y+1 < size {
 		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.y + 1, coordsEmptyTile.x})
 	}
-	if coordsEmptyTile.x-1 >= 0 {
+	if coordsEmptyTile.x-1 != 255 {
 		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.y, coordsEmptyTile.x - 1})
 	}
 	return coordsMovableTiles
@@ -106,29 +106,38 @@ func CoordsFromDirection(grid Grid, dir rune) (Coords, error) {
 	}
 
 	size := byte(len(grid))
-
 	if dir == 's' || dir == 'S' {
-		if coordsEmptyTile.y-1 >= 0 {
+		if coordsEmptyTile.y-1 != 255 {
 			coordsMovableTiles.y = coordsEmptyTile.y - 1
 			coordsMovableTiles.x = coordsEmptyTile.x
+		} else {
+			err = errors.New("It's not possible to move 'bottom'")
 		}
 	} else if dir == 'q' || dir == 'Q' {
 		if coordsEmptyTile.x+1 < size {
 			coordsMovableTiles.y = coordsEmptyTile.y
 			coordsMovableTiles.x = coordsEmptyTile.x + 1
+		} else {
+			err = errors.New("It's not possible to move 'left'")		
 		}
 	} else if dir == 'z' || dir == 'Z' {
 		if coordsEmptyTile.y+1 < size {
 			coordsMovableTiles.y = coordsEmptyTile.y + 1
 			coordsMovableTiles.x = coordsEmptyTile.x
+		} else {
+			err = errors.New("It's not possible to move 'top'")
 		}
 	} else if dir == 'd' || dir == 'D' {
-		if coordsEmptyTile.x-1 >= 0 {
+		if coordsEmptyTile.x-1 != 255 {
 			coordsMovableTiles.y = coordsEmptyTile.y
 			coordsMovableTiles.x = coordsEmptyTile.x - 1
+		} else {
+			err = errors.New("It's not possible to move 'right'")
 		}
 	}
-
+	if err != nil {
+		return coordsMovableTiles, err	
+	}
 	return coordsMovableTiles, nil
 }
 
