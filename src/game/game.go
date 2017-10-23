@@ -14,6 +14,13 @@ type Coords struct {
 	x byte
 }
 
+const ACTION_QUIT byte = 1
+const ACTION_MOVE_TOP byte = 2
+const ACTION_MOVE_RIGHT byte = 3
+const ACTION_MOVE_BOTTOM byte = 4
+const ACTION_MOVE_LEFT byte = 5
+const ACTION_SHUFFLE byte = 6
+
 const EMPTY_VALUE byte = 0
 
 func BuildGrid(size byte) Grid {
@@ -90,7 +97,7 @@ func ListMovableTiles(grid Grid) ([]Coords, error) {
 	return coordsMovableTiles, nil
 }
 
-func CoordsFromDirection(grid Grid, dir rune) (Coords, error) {
+func CoordsFromDirection(grid Grid, dir byte) (Coords, error) {
 	var coordsMovableTiles Coords
 
 	coordsEmptyTile, err := findEmptyTile(grid)
@@ -99,35 +106,41 @@ func CoordsFromDirection(grid Grid, dir rune) (Coords, error) {
 	}
 
 	size := byte(len(grid))
-	if unicode.ToLower(dir) == 's' {
-		if coordsEmptyTile.y-1 != 255 {
-			coordsMovableTiles.y = coordsEmptyTile.y - 1
-			coordsMovableTiles.x = coordsEmptyTile.x
-		} else {
-			err = errors.New("It's not possible to move 'bottom'")
-		}
-	} else if unicode.ToLower(dir) == 'q' {
-		if coordsEmptyTile.x+1 < size {
-			coordsMovableTiles.y = coordsEmptyTile.y
-			coordsMovableTiles.x = coordsEmptyTile.x + 1
-		} else {
-			err = errors.New("It's not possible to move 'left'")
-		}
-	} else if unicode.ToLower(dir) == 'z' {
+	switch dir {
+	case ACTION_MOVE_TOP:
 		if coordsEmptyTile.y+1 < size {
 			coordsMovableTiles.y = coordsEmptyTile.y + 1
 			coordsMovableTiles.x = coordsEmptyTile.x
 		} else {
 			err = errors.New("It's not possible to move 'top'")
 		}
-	} else if unicode.ToLower(dir) == 'd' {
+		break
+	case ACTION_MOVE_RIGHT:
 		if coordsEmptyTile.x-1 != 255 {
 			coordsMovableTiles.y = coordsEmptyTile.y
 			coordsMovableTiles.x = coordsEmptyTile.x - 1
 		} else {
 			err = errors.New("It's not possible to move 'right'")
 		}
+		break
+	case ACTION_MOVE_BOTTOM:
+		if coordsEmptyTile.y-1 != 255 {
+			coordsMovableTiles.y = coordsEmptyTile.y - 1
+			coordsMovableTiles.x = coordsEmptyTile.x
+		} else {
+			err = errors.New("It's not possible to move 'bottom'")
+		}
+		break
+	case ACTION_MOVE_LEFT:
+		if coordsEmptyTile.x+1 < size {
+			coordsMovableTiles.y = coordsEmptyTile.y
+			coordsMovableTiles.x = coordsEmptyTile.x + 1
+		} else {
+			err = errors.New("It's not possible to move 'left'")
+		}
+		break
 	}
+
 	if err != nil {
 		return coordsMovableTiles, err
 	}

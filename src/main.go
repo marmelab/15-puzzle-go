@@ -19,34 +19,37 @@ func clearTerminal() {
 	clearCmd.Run()
 }
 
-func KeyListener(inputChan chan rune, doneChan chan bool) {
+func detectGameCommand(event termbox.Event) byte {
+	switch event.Ch {
+	case 'S', 's':
+		return game.ACTION_SHUFFLE
+	case 0:
+		switch event.Key {
+		case termbox.KeyCtrlC, termbox.KeyEsc:
+			return game.ACTION_QUIT
+		case termbox.KeyArrowUp:
+			return game.ACTION_MOVE_TOP
+		case termbox.KeyArrowRight:
+			return game.ACTION_MOVE_RIGHT
+		case termbox.KeyArrowDown:
+			return game.ACTION_MOVE_BOTTOM
+		case termbox.KeyArrowLeft:
+			return game.ACTION_MOVE_LEFT
+		}
+	}
+	return 0
+}
+
+func KeyListener(inputChan chan byte) {
 	for {
 		event := termbox.PollEvent()
 
 		switch event.Type {
 		case termbox.EventKey:
-			switch event.Key {
-			case termbox.KeyCtrlC:
-				doneChan <- false
-				break
-			case termbox.KeyEsc:
-				doneChan <- false
-				break
-			case termbox.KeyArrowUp:
-				inputChan <- 'Z'
-				break
-			case termbox.KeyArrowRight:
-				inputChan <- 'D'
-				break
-			case termbox.KeyArrowDown:
-				inputChan <- 'S'
-				break
-			case termbox.KeyArrowLeft:
-				inputChan <- 'Q'
-				break
-			default:
-				inputChan <- event.Ch
-			}
+			inputChan <- detectGameCommand(event)
+		case termbox.EventInterrupt:
+			inputChan <- game.ACTION_QUIT
+			break
 		case termbox.EventError:
 			panic(event.Err)
 		}
@@ -63,31 +66,40 @@ func RenderListener(gridChan chan game.Grid) {
 		grid := <-gridChan
 		clearTerminal()
 		fmt.Println(renderer.DrawGrid(grid))
-		fmt.Println("Move the tiles with the arrow keys or press Esc to exit")
+		fmt.Println("Move the tiles with the arrow keys or or press (S) to shuffle or press Esc to exit")
 	}
 }
 
-func GameListener(doneChan chan bool, inputChan chan rune, gridChan chan game.Grid, startedGrid game.Grid) {
+func GameListener(doneChan chan bool, inputChan chan byte, gridChan chan game.Grid, startedGrid game.Grid) {
 	grid := game.DeepCopyGrid(startedGrid)
 	gridChan <- grid
-
 	for {
-		c := <-inputChan
-		newCoords, err := game.CoordsFromDirection(grid, c)
-		if err != nil {
-			fmt.Println(err)
-			continue
+		action := <-inputChan
+		if action == game.ACTION_QUIT {
+			doneChan <- false
+			return
 		}
-		newGrid, err := game.Move(grid, newCoords)
-		if err != nil {
-			fmt.Println("The move is not possible, please try another direction")
-			continue
+		
+		if action == game.ACTION_SHUFFLE {
+			clearTerminal()
+			fmt.Println("Shuffling...")
+			grid = game.Shuffle(grid)
+		} else {
+			newCoords, err := game.CoordsFromDirection(grid, action)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			grid, err = game.Move(grid, newCoords)
+			if err != nil {
+				fmt.Println("The move is not possible, please try another direction")
+				continue
+			}
+			if reflect.DeepEqual(grid, startedGrid) {
+				doneChan <- true
+			}
 		}
-		grid = newGrid
-		if reflect.DeepEqual(grid, startedGrid) {
-			doneChan <- true
-		}
-		gridChan <- newGrid
+		gridChan <- game.DeepCopyGrid(grid)
 	}
 }
 
@@ -102,7 +114,7 @@ func main() {
 	defer close(interruptChan)
 	doneChan := make(chan bool)
 	defer close(doneChan)
-	inputChan := make(chan rune)
+	inputChan := make(chan byte)
 	defer close(inputChan)
 	gridChan := make(chan game.Grid)
 	defer close(gridChan)
@@ -114,7 +126,7 @@ func main() {
 
 	signal.Notify(interruptChan, os.Interrupt, syscall.SIGTERM)
 	go Quit(interruptChan, doneChan)
-	go KeyListener(inputChan, doneChan)
+	go KeyListener(inputChan)
 	go RenderListener(gridChan)
 	go GameListener(doneChan, inputChan, gridChan, startedGrid)
 
