@@ -10,7 +10,10 @@ func Shuffle(grid Grid) Grid{
 	gridShuffled := DeepCopyGrid(grid)
 	go func() {
 		for {
-			movableTiles := ListMovableTiles(gridShuffled)
+			movableTiles, err := ListMovableTiles(gridShuffled)
+			if err != nil {
+				panic(err)
+			}
 			tileToMove, _ := ChoiceCoords(movableTiles)
 			gridShuffled, _ = Move(gridShuffled, tileToMove)
 		}
