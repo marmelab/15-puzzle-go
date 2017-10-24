@@ -14,7 +14,7 @@ func Shuffle(grid Grid) Grid {
 			if err != nil {
 				panic(err)
 			}
-			tileToMove, _ := ChoiceCoords(movableTiles)
+			tileToMove := ChoiceCoords(movableTiles)
 			gridShuffled, _ = Move(gridShuffled, tileToMove)
 		}
 	}()

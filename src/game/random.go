@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-func ChoiceCoords(array []Coords) (Coords, error) {
+func ChoiceCoords(array []Coords) Coords {
 	rand.Seed(time.Now().Unix())
 	n := rand.Int() % len(array)
-	return array[n], nil
+	return array[n]
 }

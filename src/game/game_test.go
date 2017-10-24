@@ -59,7 +59,7 @@ func TestCoordsFromDirection(t *testing.T) {
 		y: 1,
 		x: 2,
 	}
-	coords, err := CoordsFromDirection(grid, 'S')
+	coords, err := CoordsFromDirection(grid, ACTION_MOVE_BOTTOM)
 	if !reflect.DeepEqual(coords, expectedCoords) {
 		t.Error(fmt.Sprintf("The coords should be equal to { y: %d, x: %d}", expectedCoords.y, expectedCoords.x))
 	} else if err != nil {
@@ -73,7 +73,7 @@ func TestCoordsFromDirectionNotValid(t *testing.T) {
 		{4, 5, 6},
 		{7, 8, 0},
 	}
-	_, err := CoordsFromDirection(grid, 'Z')
+	_, err := CoordsFromDirection(grid, ACTION_MOVE_TOP)
 	if err == nil {
 		t.Error(fmt.Printf("The function should return an error because the direction is not valid"))
 	}
