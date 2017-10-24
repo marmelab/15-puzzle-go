@@ -28,6 +28,13 @@ Run the 15-puzzle game
 make run
 ```
 
+Note: you can use en environment variable `SIZE` to define the puzzle size
+
+For example with a size equals to 5
+``` bash
+SIZE=5 make run
+```
+
 ### Run the tests
 
 Run all tests
