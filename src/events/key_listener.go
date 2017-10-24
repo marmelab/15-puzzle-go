@@ -2,8 +2,8 @@ package events
 
 import (
 	"game"
+	"github.com/nsf/termbox-go"
 	"unicode"
-	"github.com/nsf/termbox-go"	
 )
 
 func detectGameCommand(event termbox.Event) byte {

@@ -2,7 +2,7 @@ package renderer
 
 import (
 	"os"
-	"os/exec"	
+	"os/exec"
 )
 
 func ClearTerminal() {

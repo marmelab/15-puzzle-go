@@ -1,10 +1,10 @@
 package events
 
 import (
-	"fmt"	
+	"fmt"
 	"game"
-	"renderer"	
-	"reflect"	
+	"reflect"
+	"renderer"
 )
 
 func GameListener(doneChan chan bool, inputChan chan byte, gridChan chan game.Grid, startedGrid game.Grid) {
@@ -16,7 +16,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, gridChan chan game.Gr
 			doneChan <- false
 			return
 		}
-		
+
 		if action == game.ACTION_SHUFFLE {
 			renderer.ClearTerminal()
 			fmt.Println("Shuffling...")

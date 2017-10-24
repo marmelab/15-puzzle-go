@@ -12,7 +12,7 @@ func TestChoiceSimpleArray(t *testing.T) {
 
 	element, err := Choice(wrongArray)
 	if ArreCoordsEquals(element, expectedCoords) {
-		t.Error("The choice method should return 34")		
+		t.Error("The choice method should return 34")
 	} else if err == nil {
 		t.Error("The choice method should not return an error")
 	}

@@ -4,9 +4,9 @@ import (
 	"time"
 )
 
-func Shuffle(grid Grid) Grid{
+func Shuffle(grid Grid) Grid {
 	timer := time.NewTimer(time.Second * 1)
-	
+
 	gridShuffled := DeepCopyGrid(grid)
 	go func() {
 		for {
@@ -18,6 +18,6 @@ func Shuffle(grid Grid) Grid{
 			gridShuffled, _ = Move(gridShuffled, tileToMove)
 		}
 	}()
-	<- timer.C
+	<-timer.C
 	return gridShuffled
 }

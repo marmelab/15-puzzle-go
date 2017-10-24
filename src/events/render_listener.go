@@ -1,9 +1,9 @@
 package events
 
 import (
+	"fmt"
 	"game"
 	"renderer"
-	"fmt"
 )
 
 func RenderListener(gridChan chan game.Grid) {

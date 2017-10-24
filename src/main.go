@@ -4,12 +4,12 @@ import (
 	e "events"
 	"fmt"
 	"game"
+	"github.com/nsf/termbox-go"
 	"os"
 	"os/signal"
 	"renderer"
 	"syscall"
 	"time"
-	"github.com/nsf/termbox-go"		
 )
 
 func main() {
