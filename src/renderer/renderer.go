@@ -1,13 +1,9 @@
 package renderer
 
 import (
-	"game"
 	"fmt"
+	"game"
 )
-
-func Hello() string {
-	return "Welcome to the 15 puzzle game.\n"
-}
 
 func DrawLine(startSymb string, stopSymb string, sepSymb string, tileSize int) string {
 	line := "\n" + startSymb
