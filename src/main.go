@@ -18,7 +18,10 @@ func getGridSize() int {
 	var gridSize int
 	flag.IntVar(&gridSize, "size", DEFAULT_GRID_SIZE, "an int")
 	flag.Parse()
-	return gridSize
+	if gridSize > 1 && gridSize <= 10 {
+		return gridSize
+	}
+	return DEFAULT_GRID_SIZE
 }
 
 func main() {
