@@ -119,10 +119,10 @@ func main() {
 		fmt.Println("\nGGWP, you solved the puzzle!")
 	}
 
-	close(interruptChan)
-	close(doneChan)
-	close(inputChan)
-	close(gridChan)
+	defer close(interruptChan)
+	defer close(doneChan)
+	defer close(inputChan)
+	defer close(gridChan)
 
 	fmt.Println("\nSee you soon :)")
 	os.Exit(0)
