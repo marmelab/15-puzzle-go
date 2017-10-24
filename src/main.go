@@ -99,9 +99,13 @@ func main() {
 	defer termbox.Close()
 
 	interruptChan := make(chan os.Signal, 2)
+	defer close(interruptChan)
 	doneChan := make(chan bool)
+	defer close(doneChan)
 	inputChan := make(chan rune)
+	defer close(inputChan)
 	gridChan := make(chan game.Grid)
+	defer close(gridChan)
 
 	clearTerminal()
 	fmt.Print("Welcome to the 15 puzzle game ")
@@ -118,11 +122,6 @@ func main() {
 	if success {
 		fmt.Println("\nGGWP, you solved the puzzle!")
 	}
-
-	defer close(interruptChan)
-	defer close(doneChan)
-	defer close(inputChan)
-	defer close(gridChan)
 
 	fmt.Println("\nSee you soon :)")
 	os.Exit(0)
