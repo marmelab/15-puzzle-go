@@ -2,15 +2,15 @@ package main
 
 import (
 	e "events"
-	"fmt"
 	"game"
 	"github.com/nsf/termbox-go"
 	"os"
 	"os/signal"
-	"renderer"
 	"syscall"
 	"time"
 )
+
+const SLEEP_DURATION time.Duration = 1
 
 func main() {
 	err := termbox.Init()
@@ -25,25 +25,21 @@ func main() {
 	defer close(doneChan)
 	inputChan := make(chan byte)
 	defer close(inputChan)
-	gridChan := make(chan game.Grid)
-	defer close(gridChan)
+	msgChan := make(chan e.Message)
+	defer close(msgChan)
 
-	renderer.ClearTerminal()
-	fmt.Print("Welcome to the 15 puzzle game ")
-	time.Sleep(time.Second * 1)
 	startedGrid := game.BuildGrid(4)
 
 	signal.Notify(interruptChan, os.Interrupt, syscall.SIGTERM)
+	go e.RenderListener(msgChan)
+	msgChan <- e.Message{"Welcome to the 15 puzzle game", true}
+	time.Sleep(time.Second * SLEEP_DURATION)
+
 	go e.QuitListener(interruptChan, doneChan)
 	go e.KeyListener(inputChan)
-	go e.RenderListener(gridChan)
-	go e.GameListener(doneChan, inputChan, gridChan, startedGrid)
+	go e.GameListener(doneChan, inputChan, msgChan, startedGrid)
 
-	success := <-doneChan
-	if success {
-		fmt.Println("\nGGWP, you solved the puzzle!")
-	}
-
-	fmt.Println("\nSee you soon :)")
+	<-doneChan
+	msgChan <- e.Message{"See you soon :)", false}
 	os.Exit(0)
 }
