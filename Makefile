@@ -1,3 +1,4 @@
+SIZE ?= 4
 DOCKER := docker run -it --rm -v "${PWD}/src:/src" 15-puzzle-go
 
 help: ## Print all commands (default)
@@ -10,7 +11,7 @@ install: build-docker ## Build the docker and install the dependencies
 	$(DOCKER) go get -u github.com/nsf/termbox-go
 
 run: ## Run the 15-puzzle game
-	$(DOCKER) go run main.go
+	$(DOCKER) go run main.go -size=$(SIZE)
 
 test: ## Run all tests
 	$(DOCKER) go test -v ./...

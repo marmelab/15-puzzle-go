@@ -16,7 +16,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 
 		if action == game.ACTION_QUIT {
 			doneChan <- false
-			return
+			break
 		}
 
 		if action == game.ACTION_SHUFFLE {
@@ -36,7 +36,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 			if reflect.DeepEqual(grid, startedGrid) {
 				msgChan <- Message{renderer.DrawGrid(startedGrid) + "\nGGWP, you solved the puzzle!", true}
 				doneChan <- true
-				return
+				break
 			}
 		}
 	}
