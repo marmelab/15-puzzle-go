@@ -2,11 +2,10 @@ package game
 
 import (
 	"math/rand"
-	"time"
 )
 
-func ChoiceCoords(array []Coords) Coords {
-	rand.Seed(time.Now().Unix())
+func ChoiceCoords(array []Coords, seed int64) Coords {
+	rand.Seed(seed)
 	n := rand.Int() % len(array)
 	return array[n]
 }
