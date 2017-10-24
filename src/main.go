@@ -40,6 +40,7 @@ func main() {
 	go e.GameListener(doneChan, inputChan, msgChan, startedGrid)
 
 	<-doneChan
-	msgChan <- e.Message{"See you soon :)", false}
+	msgChan <- e.Message{"\nSee you soon :)", false}
+	time.Sleep(time.Second * SLEEP_DURATION)
 	os.Exit(0)
 }
