@@ -1,16 +1,19 @@
 package events
 
 import (
+	"fmt"
 	"game"
 	"reflect"
 	"renderer"
 )
 
 func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message, startedGrid game.Grid) {
+	count := 0
+
 	grid := game.DeepCopyGrid(startedGrid)
 
 	for {
-		msgChan <- Message{renderer.DrawGrid(grid) + "\nMove the tiles with the arrow keys or or press (S) to shuffle or press Esc to exit", true}
+		msgChan <- Message{fmt.Sprintf("Turn %d\n%s\nMove the tiles with the arrow keys or or press (S) to shuffle or press Esc to exit", count, renderer.DrawGrid(grid)), true}
 
 		action := <-inputChan
 
@@ -22,6 +25,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 		if action == game.ACTION_SHUFFLE {
 			msgChan <- Message{"Shuffling...", true}
 			grid = game.Shuffle(grid)
+			count = 0
 		} else {
 			newCoords, err := game.CoordsFromDirection(grid, action)
 			if err != nil {
@@ -33,8 +37,9 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 				msgChan <- Message{"The move is not possible, please try another direction", false}
 				continue
 			}
+			count++
 			if reflect.DeepEqual(grid, startedGrid) {
-				msgChan <- Message{renderer.DrawGrid(startedGrid) + "\nGGWP, you solved the puzzle!", true}
+				msgChan <- Message{fmt.Sprintf("%s\nGGWP, you solved the puzzle in %d turn(s)!", renderer.DrawGrid(startedGrid), count), true}
 				doneChan <- true
 				break
 			}
