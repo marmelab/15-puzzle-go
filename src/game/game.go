@@ -9,10 +9,11 @@ import (
 type Grid [][]byte
 
 type Coords struct {
-	y byte
-	x byte
+	Y byte
+	X byte
 }
 
+const ACTION_NONE byte = 0
 const ACTION_QUIT byte = 1
 const ACTION_MOVE_TOP byte = 2
 const ACTION_MOVE_RIGHT byte = 3
@@ -57,8 +58,8 @@ func findTileByValue(grid Grid, value byte) (Coords, error) {
 		x := byte(0)
 		for x < byte(len(grid[y])) {
 			if grid[y][x] == value {
-				tile.y = y
-				tile.x = x
+				tile.Y = y
+				tile.X = x
 				return tile, nil
 			}
 			x++
@@ -81,17 +82,17 @@ func ListMovableTiles(grid Grid) ([]Coords, error) {
 	}
 
 	size := byte(len(grid))
-	if coordsEmptyTile.y > 0 {
-		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.y - 1, coordsEmptyTile.x})
+	if coordsEmptyTile.Y > 0 {
+		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.Y - 1, coordsEmptyTile.X})
 	}
-	if coordsEmptyTile.x+1 < size {
-		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.y, coordsEmptyTile.x + 1})
+	if coordsEmptyTile.X+1 < size {
+		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.Y, coordsEmptyTile.X + 1})
 	}
-	if coordsEmptyTile.y+1 < size {
-		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.y + 1, coordsEmptyTile.x})
+	if coordsEmptyTile.Y+1 < size {
+		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.Y + 1, coordsEmptyTile.X})
 	}
-	if coordsEmptyTile.x > 0 {
-		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.y, coordsEmptyTile.x - 1})
+	if coordsEmptyTile.X > 0 {
+		coordsMovableTiles = append(coordsMovableTiles, Coords{coordsEmptyTile.Y, coordsEmptyTile.X - 1})
 	}
 	return coordsMovableTiles, nil
 }
@@ -107,33 +108,33 @@ func CoordsFromDirection(grid Grid, dir byte) (Coords, error) {
 	size := byte(len(grid))
 	switch dir {
 	case ACTION_MOVE_TOP:
-		if coordsEmptyTile.y+1 < size {
-			coordsMovableTiles.y = coordsEmptyTile.y + 1
-			coordsMovableTiles.x = coordsEmptyTile.x
+		if coordsEmptyTile.Y+1 < size {
+			coordsMovableTiles.Y = coordsEmptyTile.Y + 1
+			coordsMovableTiles.X = coordsEmptyTile.X
 		} else {
 			err = errors.New("It's not possible to move 'top'")
 		}
 		break
 	case ACTION_MOVE_RIGHT:
-		if coordsEmptyTile.x-1 != 255 {
-			coordsMovableTiles.y = coordsEmptyTile.y
-			coordsMovableTiles.x = coordsEmptyTile.x - 1
+		if coordsEmptyTile.X-1 != 255 {
+			coordsMovableTiles.Y = coordsEmptyTile.Y
+			coordsMovableTiles.X = coordsEmptyTile.X - 1
 		} else {
 			err = errors.New("It's not possible to move 'right'")
 		}
 		break
 	case ACTION_MOVE_BOTTOM:
-		if coordsEmptyTile.y-1 != 255 {
-			coordsMovableTiles.y = coordsEmptyTile.y - 1
-			coordsMovableTiles.x = coordsEmptyTile.x
+		if coordsEmptyTile.Y-1 != 255 {
+			coordsMovableTiles.Y = coordsEmptyTile.Y - 1
+			coordsMovableTiles.X = coordsEmptyTile.X
 		} else {
 			err = errors.New("It's not possible to move 'bottom'")
 		}
 		break
 	case ACTION_MOVE_LEFT:
-		if coordsEmptyTile.x+1 < size {
-			coordsMovableTiles.y = coordsEmptyTile.y
-			coordsMovableTiles.x = coordsEmptyTile.x + 1
+		if coordsEmptyTile.X+1 < size {
+			coordsMovableTiles.Y = coordsEmptyTile.Y
+			coordsMovableTiles.X = coordsEmptyTile.X + 1
 		} else {
 			err = errors.New("It's not possible to move 'left'")
 		}
@@ -144,6 +145,30 @@ func CoordsFromDirection(grid Grid, dir byte) (Coords, error) {
 		return coordsMovableTiles, err
 	}
 	return coordsMovableTiles, nil
+}
+
+func DirectionFromCoords(grid Grid, coords Coords) (byte, error) {
+	coordsEmptyTile, err := findEmptyTile(grid)
+	if err != nil {
+		return ACTION_NONE, err
+	}
+
+	Y := float64(coords.Y) - float64(coordsEmptyTile.Y)
+	X := float64(coords.X) - float64(coordsEmptyTile.X)
+
+	if Y > 0 {
+		return ACTION_MOVE_TOP, nil
+	} else if Y < 0 {
+		return ACTION_MOVE_BOTTOM, nil
+	} else {
+		if X > 0 {
+			return ACTION_MOVE_LEFT, nil
+		} else if X < 0 {
+			return ACTION_MOVE_RIGHT, nil
+		} else {
+			return ACTION_NONE, errors.New("The tile cannot move")
+		}
+	}
 }
 
 func isTileInMovableTiles(grid Grid, coordsTileToMove Coords) (bool, error) {
@@ -166,7 +191,7 @@ func Move(grid Grid, coordsTileToMove Coords) (Grid, error) {
 	}
 
 	if !isTileMovable {
-		return grid, errors.New(fmt.Sprintf("The tile at coords (%d, %d) is not movable", coordsTileToMove.y, coordsTileToMove.y))
+		return grid, errors.New(fmt.Sprintf("The tile at coords (%d, %d) is not movable", coordsTileToMove.Y, coordsTileToMove.X))
 	}
 
 	emptyCoords, err := findEmptyTile(grid)
@@ -174,12 +199,12 @@ func Move(grid Grid, coordsTileToMove Coords) (Grid, error) {
 		return grid, err
 	}
 
-	newCoords, err := findTileByValue(grid, grid[coordsTileToMove.y][coordsTileToMove.x])
+	newCoords, err := findTileByValue(grid, grid[coordsTileToMove.Y][coordsTileToMove.X])
 	if err != nil {
 		return grid, err
 	}
 
 	newGrid := DeepCopyGrid(grid)
-	newGrid[emptyCoords.y][emptyCoords.x], newGrid[newCoords.y][newCoords.x] = grid[newCoords.y][newCoords.x], grid[emptyCoords.y][emptyCoords.x]
+	newGrid[emptyCoords.Y][emptyCoords.X], newGrid[newCoords.Y][newCoords.X] = grid[newCoords.Y][newCoords.X], grid[emptyCoords.Y][emptyCoords.X]
 	return newGrid, nil
 }

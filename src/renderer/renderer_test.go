@@ -1,6 +1,7 @@
 package renderer
 
 import (
+	"fmt"
 	"game"
 	"testing"
 )
@@ -38,5 +39,28 @@ func TestDrawGrid(t *testing.T) {
 
 	if expectedGridRendered2 != gridRendered2 {
 		t.Error("The grid layout is not corresponding to expected one")
+	}
+}
+
+func TestDrawMove(t *testing.T) {
+	grid := game.BuildGrid(4)
+	coords := game.Coords{2, 2}
+
+	expectedMoveRenderer := "bottom"
+	moveRenderer := DrawMove(grid, coords)
+	if moveRenderer != expectedMoveRenderer {
+		t.Error(fmt.Sprintf("The move layout %s is not corresponding to expected one %s", moveRenderer, expectedMoveRenderer))
+	}
+}
+
+func TestDrawMoveError(t *testing.T) {
+	grid := game.BuildGrid(4)
+	coords := game.Coords{3, 3}
+
+	expectedMoveRenderer := ""
+	moveRenderer := DrawMove(grid, coords)
+
+	if moveRenderer != expectedMoveRenderer {
+		t.Error(fmt.Sprintf("The move layout %s is not corresponding to expected one %s", moveRenderer, expectedMoveRenderer))
 	}
 }

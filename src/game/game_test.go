@@ -27,8 +27,8 @@ func TestListMovableTiles(t *testing.T) {
 		{7, 8, 0},
 	}
 	list, err := ListMovableTiles(grid)
-	expectedValue := grid[list[0].y][list[0].x]
-	expectedValue2 := grid[list[1].y][list[1].x]
+	expectedValue := grid[list[0].Y][list[0].X]
+	expectedValue2 := grid[list[1].Y][list[1].X]
 	if expectedValue != 6 || expectedValue2 != 8 {
 		t.Error(fmt.Sprintf("The movable tiles should be 6 and 8 and not %d and %d", expectedValue, expectedValue2))
 	}
@@ -55,13 +55,10 @@ func TestCoordsFromDirection(t *testing.T) {
 		{4, 5, 6},
 		{7, 8, 0},
 	}
-	expectedCoords := Coords{
-		y: 1,
-		x: 2,
-	}
+	expectedCoords := Coords{1, 2}
 	coords, err := CoordsFromDirection(grid, ACTION_MOVE_BOTTOM)
 	if !reflect.DeepEqual(coords, expectedCoords) {
-		t.Error(fmt.Sprintf("The coords should be equal to { y: %d, x: %d}", expectedCoords.y, expectedCoords.x))
+		t.Error(fmt.Sprintf("The coords should be equal to { y: %d, x: %d}", expectedCoords.Y, expectedCoords.X))
 	} else if err != nil {
 		t.Error(fmt.Sprintf("The function should not return an error"))
 	}
@@ -90,10 +87,7 @@ func TestMove(t *testing.T) {
 		{4, 5, 0},
 		{7, 8, 6},
 	}
-	coords := Coords{
-		y: 1,
-		x: 2,
-	}
+	coords := Coords{1, 2}
 	newGrid, err := Move(grid, coords)
 
 	if err != nil {

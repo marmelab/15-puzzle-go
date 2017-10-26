@@ -53,3 +53,21 @@ func DrawGrid(grid game.Grid) string {
 	gridToShow += lastHorizontalLine
 	return gridToShow
 }
+
+func DrawMove(grid game.Grid, coords game.Coords) string {
+	dir, err := game.DirectionFromCoords(grid, coords)
+	if err != nil {
+		return ""
+	}
+	switch dir {
+	case game.ACTION_MOVE_TOP:
+		return "top"
+	case game.ACTION_MOVE_RIGHT:
+		return "right"
+	case game.ACTION_MOVE_BOTTOM:
+		return "bottom"
+	case game.ACTION_MOVE_LEFT:
+		return "left"
+	}
+	return ""
+}
