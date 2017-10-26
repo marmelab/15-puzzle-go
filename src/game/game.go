@@ -97,6 +97,25 @@ func ListMovableTiles(grid Grid) ([]Coords, error) {
 	return coordsMovableTiles, nil
 }
 
+func ListMovableTilesWithoutGoingBack(grid Grid, previousMovedTile byte) ([]Coords, error) {
+	movableTiles, err := ListMovableTiles(grid)
+	if err != nil {
+		return movableTiles, err
+	}
+	indexToRemove := -1
+	for index, coords := range(movableTiles) {
+		if grid[coords.Y][coords.X] == previousMovedTile {
+			indexToRemove = index
+			break
+		}
+	}
+	if indexToRemove >= 0 {
+		return movableTiles[:indexToRemove], nil
+	} else {
+		return movableTiles, nil
+	}
+}
+
 func CoordsFromDirection(grid Grid, dir byte) (Coords, error) {
 	var coordsMovableTiles Coords
 

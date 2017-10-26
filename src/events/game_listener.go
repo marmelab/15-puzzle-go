@@ -27,7 +27,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 
 		if action == game.ACTION_SHUFFLE {
 			msgChan <- Message{"Shuffling...", true}
-			grid = game.Shuffle(grid)
+			grid, _ = game.Shuffle(grid)
 			turnCounter = 0
 		} else {
 			newCoords, err := game.CoordsFromDirection(grid, action)

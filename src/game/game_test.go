@@ -49,6 +49,23 @@ func TestListMovableTilesError(t *testing.T) {
 	}
 }
 
+func TestListMovableTilesWithoutGoingBack(t *testing.T) {
+	grid := Grid{
+		{1, 2, 3},
+		{4, 5, 0},
+		{7, 8, 6},
+	}
+
+	list, err := ListMovableTilesWithoutGoingBack(grid, 5)
+
+	if len(list) != 2 {
+		t.Error(fmt.Sprintf("The movable tiles should return only two values"))
+	}
+	if err != nil {
+		t.Error("The ListMovableTilesWithoutGoingBack function should not return an error.")
+	}
+}
+
 func TestCoordsFromDirection(t *testing.T) {
 	grid := Grid{
 		{1, 2, 3},
