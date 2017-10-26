@@ -10,6 +10,8 @@ func detectGameCommand(event termbox.Event) byte {
 	switch unicode.ToLower(event.Ch) {
 	case 's':
 		return game.ACTION_SHUFFLE
+	case 'h':
+		return game.ACTION_HELP
 	case 0:
 		switch event.Key {
 		case termbox.KeyCtrlC, termbox.KeyEsc:

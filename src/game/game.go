@@ -20,6 +20,7 @@ const ACTION_MOVE_RIGHT byte = 3
 const ACTION_MOVE_BOTTOM byte = 4
 const ACTION_MOVE_LEFT byte = 5
 const ACTION_SHUFFLE byte = 6
+const ACTION_HELP byte = 7
 
 const EMPTY_VALUE byte = 0
 

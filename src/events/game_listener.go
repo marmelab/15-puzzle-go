@@ -12,7 +12,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 	grid := game.DeepCopyGrid(startedGrid)
 	turnCounter := 0
 	for {
-		msgChan <- Message{fmt.Sprintf("Turn %d\n%s\nMove the tiles with the arrow keys or or press (S) to shuffle or press Esc to exit", turnCounter, renderer.DrawGrid(grid)), true}
+		msgChan <- Message{fmt.Sprintf("Turn %d\n%s\nMove the tiles with the arrow keys\nor press (S) to shuffle\nor press (H) to be helped\nor press Esc to exit", turnCounter, renderer.DrawGrid(grid)), true}
 
 		action := <-inputChan
 
@@ -26,6 +26,8 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 			grid, _ = game.Shuffle(grid)
 			time.Sleep(time.Second * 1)
 			turnCounter = 0
+		} else if action == game.ACTION_HELP {
+			go SuggestListener(msgChan, grid, startedGrid)
 		} else {
 			newCoords, err := game.CoordsFromDirection(grid, action)
 			if err != nil {
@@ -44,6 +46,5 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 				break
 			}
 		}
-		go SuggestListener(msgChan, grid, startedGrid)
 	}
 }
