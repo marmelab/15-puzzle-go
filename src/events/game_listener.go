@@ -8,11 +8,6 @@ import (
 )
 
 func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message, startedGrid game.Grid) {
-	gridChan := make(chan game.Grid)
-	defer close(gridChan)
-
-	go SuggestListener(msgChan, gridChan, startedGrid)
-
 	grid := game.DeepCopyGrid(startedGrid)
 	turnCounter := 0
 	for {
@@ -46,7 +41,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 				doneChan <- true
 				break
 			}
-			gridChan <- grid
 		}
+		go SuggestListener(msgChan, grid, startedGrid)
 	}
 }

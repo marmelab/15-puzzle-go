@@ -43,6 +43,26 @@ func Taxicab(grid Grid, grid2 Grid) int {
 	return sum
 }
 
+func TaxicabWithValues(grid Grid, grid2 Grid) int {
+	sum := 0
+	size := len(grid)
+	y := 0
+
+	for y < size {
+		x := 0
+		for x < size {
+			if grid[y][x] != grid2[y][x] {
+				expectedPos, _ := findTileByValue(grid2, grid[y][x])
+				sum += int(math.Abs(float64(y-int(expectedPos.Y))) + math.Abs(float64(x-int(expectedPos.X))))
+				sum += size*size - int(grid[y][x])
+			}
+			x++
+		}
+		y++
+	}
+	return sum
+}
+
 type Node struct {
 	Cost      int
 	Heuristic int
@@ -87,10 +107,10 @@ func BuildPath(node Node) []Coords {
 	return node.Moves
 }
 
-func DeepPuzzleAlgorithm2(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
+func DeepPuzzleAlgorithm(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
 	var coords []Coords
 
-	node := Node{0, Taxicab(shuffledGrid, solvedGrid), shuffledGrid, coords}
+	node := Node{0, TaxicabWithValues(shuffledGrid, solvedGrid), shuffledGrid, coords}
 	var openList []Node
 	openList = AddToPriorityList(openList, node)
 
