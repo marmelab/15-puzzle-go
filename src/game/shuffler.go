@@ -21,7 +21,7 @@ func Shuffle(grid Grid) (Grid, int) {
 				panic(err)
 			}
 
-			tileToMove = ChoiceCoords(movableTiles, time.Now().Unix())
+			tileToMove = ChoiceCoordsNoSeed(movableTiles)
 			gridShuffled, _ = Move(gridShuffled, tileToMove)
 			movableTiles, err = ListMovableTilesWithoutGoingBack(gridShuffled, gridShuffled[tileToMove.Y][tileToMove.X])
 			count++

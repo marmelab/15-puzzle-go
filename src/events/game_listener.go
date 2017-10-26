@@ -5,6 +5,7 @@ import (
 	"game"
 	"reflect"
 	"renderer"
+	"time"
 )
 
 func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message, startedGrid game.Grid) {
@@ -23,6 +24,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 		if action == game.ACTION_SHUFFLE {
 			msgChan <- Message{"Shuffling...", true}
 			grid, _ = game.Shuffle(grid)
+			time.Sleep(time.Second * 1)
 			turnCounter = 0
 		} else {
 			newCoords, err := game.CoordsFromDirection(grid, action)
