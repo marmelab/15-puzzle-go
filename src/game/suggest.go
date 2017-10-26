@@ -1,10 +1,10 @@
 package game
 
 import (
+	"errors"
 	"math"
 	"reflect"
 	"sort"
-	"errors"
 )
 
 func CountMisplacedTiles(grid Grid, grid2 Grid) int {

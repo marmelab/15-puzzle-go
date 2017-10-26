@@ -103,7 +103,7 @@ func ListMovableTilesWithoutGoingBack(grid Grid, previousMovedTile byte) ([]Coor
 		return movableTiles, err
 	}
 	indexToRemove := -1
-	for index, coords := range(movableTiles) {
+	for index, coords := range movableTiles {
 		if grid[coords.Y][coords.X] == previousMovedTile {
 			indexToRemove = index
 			break

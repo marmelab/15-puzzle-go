@@ -10,14 +10,14 @@ import (
 func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message, startedGrid game.Grid) {
 	gridChan := make(chan game.Grid)
 	defer close(gridChan)
-	
+
 	go SuggestListener(msgChan, gridChan, startedGrid)
 
 	grid := game.DeepCopyGrid(startedGrid)
 	turnCounter := 0
 	for {
 		msgChan <- Message{fmt.Sprintf("Turn %d\n%s\nMove the tiles with the arrow keys or or press (S) to shuffle or press Esc to exit", turnCounter, renderer.DrawGrid(grid)), true}
-		
+
 		action := <-inputChan
 
 		if action == game.ACTION_QUIT {
@@ -46,7 +46,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 				doneChan <- true
 				break
 			}
-			gridChan <- grid			
-    }
+			gridChan <- grid
+		}
 	}
 }
