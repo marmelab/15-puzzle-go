@@ -8,13 +8,16 @@ import (
 )
 
 func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message, startedGrid game.Grid) {
-	count := 0
+	gridChan := make(chan game.Grid)
+	defer close(gridChan)
+	
+	go SuggestListener(msgChan, gridChan, startedGrid)
 
 	grid := game.DeepCopyGrid(startedGrid)
-
+	turnCounter := 0
 	for {
-		msgChan <- Message{fmt.Sprintf("Turn %d\n%s\nMove the tiles with the arrow keys or or press (S) to shuffle or press Esc to exit", count, renderer.DrawGrid(grid)), true}
-
+		msgChan <- Message{fmt.Sprintf("Turn %d\n%s\nMove the tiles with the arrow keys or or press (S) to shuffle or press Esc to exit", turnCounter, renderer.DrawGrid(grid)), true}
+		
 		action := <-inputChan
 
 		if action == game.ACTION_QUIT {
@@ -25,7 +28,7 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 		if action == game.ACTION_SHUFFLE {
 			msgChan <- Message{"Shuffling...", true}
 			grid = game.Shuffle(grid)
-			count = 0
+			turnCounter = 0
 		} else {
 			newCoords, err := game.CoordsFromDirection(grid, action)
 			if err != nil {
@@ -37,12 +40,13 @@ func GameListener(doneChan chan bool, inputChan chan byte, msgChan chan Message,
 				msgChan <- Message{"The move is not possible, please try another direction", false}
 				continue
 			}
-			count++
+			turnCounter++
 			if reflect.DeepEqual(grid, startedGrid) {
-				msgChan <- Message{fmt.Sprintf("%s\nGGWP, you solved the puzzle in %d turn(s)!", renderer.DrawGrid(startedGrid), count), true}
+				msgChan <- Message{fmt.Sprintf("%s\nGGWP, you solved the puzzle in %d turn(s)!", renderer.DrawGrid(startedGrid), turnCounter), true}
 				doneChan <- true
 				break
 			}
-		}
+			gridChan <- grid			
+    }
 	}
 }
