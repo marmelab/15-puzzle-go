@@ -85,7 +85,7 @@ func Suggest(w http.ResponseWriter, r *http.Request) {
 
 	grid := game.ConvertGridIntToGrid(gridInt)
 	initialGrid := game.ConvertGridIntToGrid(initialGridInt)
-	path, err := game.DeepPuzzleAlgorithm(grid, initialGrid)
+	path, err := game.SolvePuzzle(grid, initialGrid)
 	panicOnError(err)
 
 	w.Header().Set("Content-Type", "application/json")
