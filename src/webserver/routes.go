@@ -3,7 +3,6 @@ package webserver
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"game"
 	"net/http"
 	"strconv"
@@ -34,8 +33,6 @@ func panicOnError(err error) {
 }
 
 func New(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Route 'new' called")
-
 	queryString := r.URL.Query().Get("size")
 
 	size, err := strconv.Atoi(queryString)
@@ -47,13 +44,10 @@ func New(w http.ResponseWriter, r *http.Request) {
 
 	grid := game.BuildGrid(byte(size))
 
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(GridResponse{Grid: game.ConvertGridToGridInt(grid)})
 }
 
 func Move(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Route 'move' called")
-
 	decoder := json.NewDecoder(r.Body)
 
 	var moveParams MoveParams
@@ -72,8 +66,6 @@ func Move(w http.ResponseWriter, r *http.Request) {
 }
 
 func Suggest(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Route 'suggest' called")
-
 	gridJson := r.URL.Query().Get("grid")
 	initialGridJson := r.URL.Query().Get("initial_grid")
 

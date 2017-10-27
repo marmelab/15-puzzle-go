@@ -9,6 +9,7 @@ import (
 
 func Server(port int) {
 	r := mux.NewRouter()
+	r.Headers("Content-Type", "application/json")
 	r.HandleFunc("/new", New).Methods("GET")
 	r.HandleFunc("/move", Move).Methods("POST")
 	r.HandleFunc("/suggest", Suggest).Methods("GET")
