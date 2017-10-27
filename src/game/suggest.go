@@ -7,6 +7,13 @@ import (
 	"sort"
 )
 
+type Node struct {
+	Cost      int
+	Heuristic int
+	Grid      Grid
+	Moves     []Coords
+}
+
 func CountMisplacedTiles(grid Grid, grid2 Grid) int {
 	sum := 0
 	size := len(grid)
@@ -63,13 +70,6 @@ func TaxicabWithValues(grid Grid, grid2 Grid) int {
 	return sum
 }
 
-type Node struct {
-	Cost      int
-	Heuristic int
-	Grid      Grid
-	Moves     []Coords
-}
-
 func CompareTwoNodesByCost(n1 Node, n2 Node) int {
 	if n1.Cost < n2.Cost {
 		return 1
@@ -99,8 +99,7 @@ func AddToPriorityList(list []Node, node Node) []Node {
 
 func RemoveFromPriorityList(list []Node) ([]Node, Node) {
 	node := list[0]
-	list = list[1:]
-	return list, node
+	return append(list[:0], list[1:]...), node
 }
 
 func BuildPath(node Node) []Coords {
