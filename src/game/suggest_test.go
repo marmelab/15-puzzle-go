@@ -121,19 +121,11 @@ func TestTaxicabWithValues(t *testing.T) {
 }
 
 func TestCompareTwoNodesByCostPositive(t *testing.T) {
-	grid1 := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-	grid2 := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-	coords := make([]Coords, 0)
-	n1 := Node{1, 0, grid1, coords}
-	n2 := Node{10, 0, grid2, coords}
+	var grid Grid
+	var coords []Coords
+
+	n1 := Node{1, 0, grid, coords}
+	n2 := Node{10, 0, grid, coords}
 
 	comparison := CompareTwoNodesByCost(n1, n2)
 
@@ -143,19 +135,11 @@ func TestCompareTwoNodesByCostPositive(t *testing.T) {
 }
 
 func TestCompareTwoNodesByCostNegative(t *testing.T) {
-	grid1 := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-	grid2 := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-	coords := make([]Coords, 0)
-	n1 := Node{10, 0, grid1, coords}
-	n2 := Node{1, 0, grid2, coords}
+	var grid Grid
+	var coords []Coords
+
+	n1 := Node{10, 0, grid, coords}
+	n2 := Node{1, 0, grid, coords}
 
 	comparison := CompareTwoNodesByCost(n1, n2)
 
@@ -165,19 +149,11 @@ func TestCompareTwoNodesByCostNegative(t *testing.T) {
 }
 
 func TestCompareTwoNodesByCostEquals(t *testing.T) {
-	grid1 := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-	grid2 := Grid{
-		{1, 2, 3},
-		{4, 5, 6},
-		{7, 8, 0},
-	}
-	coords := make([]Coords, 0)
-	n1 := Node{10, 0, grid1, coords}
-	n2 := Node{10, 0, grid2, coords}
+	var grid Grid
+	var coords []Coords
+
+	n1 := Node{10, 0, grid, coords}
+	n2 := Node{10, 0, grid, coords}
 
 	comparison := CompareTwoNodesByCost(n1, n2)
 
@@ -334,7 +310,8 @@ func TestNotIsNodeInListWithLowerCost(t *testing.T) {
 }
 
 func TestAddToPriorityListEnd(t *testing.T) {
-	coords := make([]Coords, 0)
+	var coords []Coords
+
 	grid := Grid{
 		{1, 0, 3},
 		{4, 2, 5},
@@ -366,7 +343,8 @@ func TestAddToPriorityListEnd(t *testing.T) {
 }
 
 func TestAddToPriorityListTop(t *testing.T) {
-	coords := make([]Coords, 0)
+	var coords []Coords
+
 	grid := Grid{
 		{1, 0, 3},
 		{4, 2, 5},
@@ -378,7 +356,7 @@ func TestAddToPriorityListTop(t *testing.T) {
 	n3 := Node{3, 2, grid, coords}
 	n4 := Node{4, 3, grid, coords}
 
-	listNodes := make([]Node, 0)
+	var listNodes []Node
 	listNodes = append(listNodes, n1)
 	listNodes = append(listNodes, n2)
 	listNodes = append(listNodes, n3)
