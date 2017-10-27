@@ -15,10 +15,10 @@ install: build-docker ## Build the docker and install the dependencies
 	$(DOCKER) go get -u github.com/gorilla/mux
 
 run: ## Run the 15-puzzle game with the env variable SIZE as parameter
-	$(DOCKER) go run main.go --size=$(SIZE)
+	$(DOCKER) go run main/main.go --size=$(SIZE)
 
 run-server: ## Run the 15-puzzle webserver at port 2000
-	$(DOCKER_WEBSERVER) go run main-server.go
+	$(DOCKER_WEBSERVER) go run main/main-server.go
 
 test: ## Run all tests
 	$(DOCKER) go test -v ./...
