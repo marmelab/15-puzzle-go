@@ -9,3 +9,8 @@ func ChoiceCoords(array []Coords, seed int64) Coords {
 	n := rand.Int() % len(array)
 	return array[n]
 }
+
+func ChoiceCoordsNoSeed(array []Coords) Coords {
+	n := rand.Int() % len(array)
+	return array[n]
+}
