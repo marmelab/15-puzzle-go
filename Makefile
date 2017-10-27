@@ -12,6 +12,7 @@ build-docker: ## Build the docker
 
 install: build-docker ## Build the docker and install the dependencies
 	$(DOCKER) go get -u github.com/nsf/termbox-go
+	$(DOCKER) go get -u github.com/gorilla/mux
 
 run: ## Run the 15-puzzle game with the env variable SIZE as parameter
 	$(DOCKER) go run main.go --size=$(SIZE)
