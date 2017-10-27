@@ -3,3 +3,5 @@ FROM golang:1.9
 WORKDIR /src
 
 ENV GOPATH /
+
+EXPOSE 2000
