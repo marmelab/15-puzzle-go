@@ -27,29 +27,29 @@ func ConvertGridIntToGrid(grid [][]int) Grid {
 }
 
 func ConvertMoveStringToMove(MoveString string) byte {
-	switch (MoveString) {
+	switch MoveString {
 	case "top":
 		return ACTION_MOVE_TOP
 	case "right":
-		return ACTION_MOVE_RIGHT				
+		return ACTION_MOVE_RIGHT
 	case "bottom":
-		return ACTION_MOVE_BOTTOM		
+		return ACTION_MOVE_BOTTOM
 	case "left":
-		return ACTION_MOVE_LEFT		
+		return ACTION_MOVE_LEFT
 	}
 	return ACTION_NONE
 }
 
 func ConvertMoveToMoveString(Move byte) string {
-	switch (Move) {
+	switch Move {
 	case ACTION_MOVE_TOP:
 		return "top"
 	case ACTION_MOVE_RIGHT:
-		return "right"				
+		return "right"
 	case ACTION_MOVE_BOTTOM:
 		return "bottom"
 	case ACTION_MOVE_LEFT:
-		return "left"		
+		return "left"
 	}
 	return "none"
 }

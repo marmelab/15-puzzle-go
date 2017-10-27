@@ -2,11 +2,11 @@ package webserver
 
 import (
 	"encoding/json"
-	"game"
-	"strconv"
-	"fmt"
-	"net/http"
 	"errors"
+	"fmt"
+	"game"
+	"net/http"
+	"strconv"
 )
 
 type GridResponse struct {
@@ -19,7 +19,7 @@ type MoveParams struct {
 }
 
 type SuggestParams struct {
-	Grid [][]int
+	Grid       [][]int
 	SolvedGrid [][]int
 }
 
@@ -35,10 +35,10 @@ func panicOnError(err error) {
 
 func New(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route 'new' called")
-	
+
 	queryString := r.URL.Query().Get("size")
-	
-	size, err :=strconv.Atoi(queryString)
+
+	size, err := strconv.Atoi(queryString)
 	if err != nil {
 		panicOnError(err)
 	} else if size < 1 || size >= 10 {
@@ -53,7 +53,7 @@ func New(w http.ResponseWriter, r *http.Request) {
 
 func Move(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route 'move' called")
-	
+
 	decoder := json.NewDecoder(r.Body)
 
 	var moveParams MoveParams
@@ -73,18 +73,20 @@ func Move(w http.ResponseWriter, r *http.Request) {
 
 func Suggest(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Route 'suggest' called")
-	
-	decoder := json.NewDecoder(r.Body)
 
-	var suggestParams SuggestParams
-	err := decoder.Decode(&suggestParams)
+	gridJson := r.URL.Query().Get("grid")
+	initialGridJson := r.URL.Query().Get("initial_grid")
+
+	var gridInt [][]int
+	var initialGridInt [][]int
+	err := json.Unmarshal([]byte(gridJson), &gridInt)
+	err = json.Unmarshal([]byte(initialGridJson), &initialGridInt)
 	panicOnError(err)
 
-	defer r.Body.Close()
-	
-	grid := game.ConvertGridIntToGrid(suggestParams.Grid)
-	solvedGrid := game.ConvertGridIntToGrid(suggestParams.SolvedGrid)
-	path, err := game.DeepPuzzleAlgorithm(grid, solvedGrid)
+	grid := game.ConvertGridIntToGrid(gridInt)
+	initialGrid := game.ConvertGridIntToGrid(initialGridInt)
+	path, err := game.DeepPuzzleAlgorithm(grid, initialGrid)
+	panicOnError(err)
 
 	w.Header().Set("Content-Type", "application/json")
 
