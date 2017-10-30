@@ -3,8 +3,11 @@ package events
 import (
 	"game"
 	"github.com/nsf/termbox-go"
+	"time"
 	"unicode"
 )
+
+const SLEEP_DURATION time.Duration = 10
 
 func detectGameCommand(event termbox.Event) byte {
 	switch unicode.ToLower(event.Ch) {
@@ -42,5 +45,6 @@ func KeyListener(inputChan chan byte) {
 		case termbox.EventError:
 			panic(event.Err)
 		}
+		time.Sleep(time.Millisecond * SLEEP_DURATION)
 	}
 }
