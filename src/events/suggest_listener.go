@@ -10,22 +10,22 @@ import (
 const SUGGEST_DURATION time.Duration = 1
 
 func SuggestListener(msgChan chan Message, grid game.Grid, startedGrid game.Grid) {
-	suggestMsg := make(chan string, 1)
-	defer close(suggestMsg)
+	timeout := make(chan bool, 1)
 
 	go func() {
-		path, _ := game.SolvePuzzle(grid, startedGrid)
-		if len(path) > 0 {
-			suggestion := path[0]
-			suggestMsg <- fmt.Sprintf("> Suggest: move tile n°%d by pressing the %s arrow", grid[suggestion.Y][suggestion.X], renderer.DrawMove(grid, suggestion))
-		}
+		time.Sleep(time.Second * SUGGEST_DURATION)
+		timeout <- true
 	}()
 
-	select {
-	case msg := <-suggestMsg:
-		msgChan <- Message{msg, false}
-		return
-	case <-time.After(time.Second * SUGGEST_DURATION):
-		return
-	}
+	go func() {
+		path, err := game.SolvePuzzle(grid, startedGrid, timeout)
+		var msg string
+		if err != nil {
+			msg = err.Error()
+		} else if len(path) > 0 {
+			suggestion := path[0]
+			msg = fmt.Sprintf("Move tile n°%d by pressing the %s arrow", grid[suggestion.Y][suggestion.X], renderer.DrawMove(grid, suggestion))
+		}
+		msgChan <- Message{fmt.Sprintf("\n> Suggest: %s", msg), false}
+	}()
 }

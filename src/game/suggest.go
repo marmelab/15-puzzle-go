@@ -106,28 +106,35 @@ func BuildPath(node Node) []Coords {
 	return node.Moves
 }
 
-func SolvePuzzle(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
+func SolvePuzzle(shuffledGrid Grid, solvedGrid Grid, timeout chan bool) ([]Coords, error) {
 	var coords []Coords
 
 	node := Node{0, TaxicabWithValues(shuffledGrid, solvedGrid), shuffledGrid, coords}
 	var openList []Node
 	openList = AddToPriorityList(openList, node)
 
-	for len(openList) > 0 {
-		openList, node = RemoveFromPriorityList(openList)
+	timedOut := false
+	for len(openList) > 0 && !timedOut {
+		select {
+		case timedOut = <-timeout:
+		default:
+			openList, node = RemoveFromPriorityList(openList)
 
-		if reflect.DeepEqual(node.Grid, solvedGrid) {
-			return node.Moves, nil
-		}
+			if reflect.DeepEqual(node.Grid, solvedGrid) {
+				return node.Moves, nil
+			}
 
-		possibleMoves, _ := ListMovableTiles(node.Grid)
-		for _, coords := range possibleMoves {
-			neighboorGrid, _ := Move(node.Grid, coords)
-			neighboorNode := Node{node.Cost + 1, node.Cost + 1 + Taxicab(neighboorGrid, solvedGrid), neighboorGrid, append(node.Moves, coords)}
+			possibleMoves, _ := ListMovableTiles(node.Grid)
+			for _, coords := range possibleMoves {
+				neighboorGrid, _ := Move(node.Grid, coords)
+				neighboorNode := Node{node.Cost + 1, node.Cost + 1 + Taxicab(neighboorGrid, solvedGrid), neighboorGrid, append(node.Moves, coords)}
 
-			openList = AddToPriorityList(openList, neighboorNode)
+				openList = AddToPriorityList(openList, neighboorNode)
+			}
 		}
 	}
-
-	return coords, errors.New("No solution found by the deep puzzle algorithm")
+	if timedOut {
+		return make([]Coords, 0), errors.New("The solver has been stopped by a timeout")
+	}
+	return make([]Coords, 0), errors.New("No solution found by the deep puzzle algorithm")
 }
