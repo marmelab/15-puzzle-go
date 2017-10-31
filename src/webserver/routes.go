@@ -33,9 +33,9 @@ func panicOnError(err error) {
 }
 
 func New(w http.ResponseWriter, r *http.Request) {
-	queryString := r.URL.Query().Get("size")
+	sizeString := r.URL.Query().Get("size")
 
-	size, err := strconv.Atoi(queryString)
+	size, err := strconv.Atoi(sizeString)
 	if err != nil {
 		panicOnError(err)
 	} else if size < 1 || size >= 10 {
@@ -86,7 +86,8 @@ func Suggest(w http.ResponseWriter, r *http.Request) {
 		dir, err := game.DirectionFromCoords(grid, path[0])
 		panicOnError(err)
 		json.NewEncoder(w).Encode(game.ConvertMoveToMoveString(dir))
-	} else {
-		panicOnError(errors.New("No suggestion found"))
+		return
 	}
+	w.WriteHeader(http.StatusNotFound)
+	w.Write([]byte("No suggestion found"))
 }
