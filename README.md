@@ -35,6 +35,14 @@ For example with a size equals to 5
 SIZE=5 make run
 ```
 
+### Run the webserver
+
+Run the 15-puzzle webserver at port 2000
+
+``` bash
+make run-server
+```
+
 ### Run the tests
 
 Run all tests

@@ -106,7 +106,7 @@ func BuildPath(node Node) []Coords {
 	return node.Moves
 }
 
-func DeepPuzzleAlgorithm(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
+func SolvePuzzle(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
 	var coords []Coords
 
 	node := Node{0, TaxicabWithValues(shuffledGrid, solvedGrid), shuffledGrid, coords}
