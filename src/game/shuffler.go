@@ -6,27 +6,41 @@ import (
 
 const SHUFFLE_DURATION time.Duration = 50
 
+type ShuffleResult struct {
+	Grid  Grid
+	Count int
+}
+
 func Shuffle(grid Grid) (Grid, int) {
 	timer := time.NewTimer(time.Millisecond * SHUFFLE_DURATION)
 
-	gridShuffled := DeepCopyGrid(grid)
+	shuffleChan := make(chan ShuffleResult, 1)
+	defer close(shuffleChan)
 
-	count := 0
-	var tileToMove Coords
 	go func() {
+		var tileToMove Coords
+		gridShuffled := DeepCopyGrid(grid)
 		movableTiles, err := ListMovableTiles(gridShuffled)
+		count := 0
 
 		for {
-			if err != nil {
-				panic(err)
-			}
+			select {
+			case <-timer.C:
+				shuffleChan <- ShuffleResult{gridShuffled, count}
+				return
+			default:
+				if err != nil {
+					panic(err)
+				}
 
-			tileToMove = ChoiceCoordsNoSeed(movableTiles)
-			gridShuffled, _ = Move(gridShuffled, tileToMove)
-			movableTiles, err = ListMovableTilesWithoutGoingBack(gridShuffled, gridShuffled[tileToMove.Y][tileToMove.X])
-			count++
+				tileToMove = ChoiceCoordsNoSeed(movableTiles)
+				gridShuffled, _ = Move(gridShuffled, tileToMove)
+				movableTiles, err = ListMovableTilesWithoutGoingBack(gridShuffled, gridShuffled[tileToMove.Y][tileToMove.X])
+				count++
+			}
 		}
 	}()
-	<-timer.C
-	return gridShuffled, count
+
+	result := <-shuffleChan
+	return result.Grid, result.Count
 }
