@@ -2,9 +2,7 @@ package game
 
 import (
 	"errors"
-	"fmt"
 	"math"
-	"os"
 	"reflect"
 	"sort"
 	"time"
@@ -170,43 +168,29 @@ func BuildNeighborList(node Node, solvedGrid Grid, possibleMoves []Coords) []Nod
 	return subList
 }
 
-func BuildDepthList(f *os.File, list []Node, solvedGrid Grid, listChan chan []Node, timeoutChan chan bool) {
+func BuildDepthList(list []Node, solvedGrid Grid, listChan chan []Node, timeoutChan chan bool) {
 	var sublist []Node
 
-	for i, node := range list {
+	for _, node := range list {
 		select {
 		case <-timeoutChan:
 			return
 		default:
-
-			f.Write([]byte(fmt.Sprintf("\nNeighbours %d", i)))
-
 			previousMoveCoords := node.Moves[len(node.Moves)-1]
 			previousValue := node.Grid[previousMoveCoords.Y][previousMoveCoords.X]
 			possibleMoves, _ := ListMovableTilesWithoutGoingBack(node.Grid, previousValue)
 			for _, neighbor := range BuildNeighborList(node, solvedGrid, possibleMoves) {
-				// f.Write([]byte(fmt.Sprintf("\n Heuristic %d, Coords %v", neighbor.Heuristic, neighbor.Moves)))
 				sublist = append(sublist, neighbor)
 			}
-			// f.Write([]byte("\n"))
 		}
 	}
 	listChan <- sublist
 }
 
-func findGridResolvedInList(list []Node, f *os.File) (Node, error) {
+func findGridResolvedInList(list []Node) (Node, error) {
 	var node Node
 	for _, node = range list {
 		if node.Heuristic == 0 {
-			var msg string
-			msg += fmt.Sprintf("\n\nBEST MOVE\n")
-
-			for _, val := range node.Moves {
-				msg += fmt.Sprintf("\n Coords %v", val)
-			}
-			f.Write([]byte(fmt.Sprintf("%s\n", msg)))
-			f.Sync()
-
 			return node, nil
 		}
 	}
@@ -214,24 +198,29 @@ func findGridResolvedInList(list []Node, f *os.File) (Node, error) {
 }
 
 func SolvePuzzleD(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
-	// Create the log file
-	f, _ := os.Create("dat.txt")
+	possibleMoves, _ := ListMovableTiles(shuffledGrid)
+	return solvePuzzleD(shuffledGrid, solvedGrid, possibleMoves)
+}
 
-	// Build the channels
+func SolvePuzzleDWithPreviousMove(shuffledGrid Grid, solvedGrid Grid, lastMove Coords) ([]Coords, error) {
+	previousValue := shuffledGrid[lastMove.Y][lastMove.X]
+	possibleMoves, _ := ListMovableTilesWithoutGoingBack(shuffledGrid, previousValue)
+
+	return solvePuzzleD(shuffledGrid, solvedGrid, possibleMoves)
+}
+
+func solvePuzzleD(shuffledGrid Grid, solvedGrid Grid, possibleMoves []Coords) ([]Coords, error) {
+	initialNode := Node{0, TaxicabWithValues(shuffledGrid, solvedGrid), shuffledGrid, make([]Coords, 0)}
+
 	timeoutChan := make(chan bool, 1)
 	defer close(timeoutChan)
 	listChan := make(chan []Node, 1)
 	defer close(listChan)
 
-	// Init with the first moves
-	initialNode := Node{0, TaxicabWithValues(shuffledGrid, solvedGrid), shuffledGrid, make([]Coords, 0)}
-	possibleMoves, _ := ListMovableTiles(shuffledGrid)
-
 	list := make([][]Node, 0)
 
-	// Check if the solution is in the first list
 	sublist := BuildNeighborList(initialNode, solvedGrid, possibleMoves)
-	node, err := findGridResolvedInList(sublist, f)
+	node, err := findGridResolvedInList(sublist)
 	if err == nil {
 		return node.Moves, nil
 	}
@@ -239,7 +228,6 @@ func SolvePuzzleD(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
 	list = append(list, sublist)
 	solved := false
 
-	// Start the timeout
 	go func() {
 		time.Sleep(time.Second * SUGGEST_DURATION)
 		if solved {
@@ -248,21 +236,16 @@ func SolvePuzzleD(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
 		timeoutChan <- true
 	}()
 
-	// Start the main loop
 	depth := 0
 	for {
-		go BuildDepthList(f, list[depth], solvedGrid, listChan, timeoutChan)
+		go BuildDepthList(list[depth], solvedGrid, listChan, timeoutChan)
 
 		select {
 		case <-timeoutChan:
 			sortedList := SortListWithHeuristic(list[depth-1])
-			f.Write([]byte(fmt.Sprintf("\n\nTIMEOUT\n")))
-			f.Write([]byte(fmt.Sprintf("\n%v\n", sortedList[0])))
-
-			f.Sync()
 			return sortedList[0].Moves, nil
 		case sublist = <-listChan:
-			node, err := findGridResolvedInList(sublist, f)
+			node, err := findGridResolvedInList(sublist)
 			if err == nil {
 				solved = true
 				return node.Moves, nil
@@ -272,12 +255,4 @@ func SolvePuzzleD(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
 		}
 		depth++
 	}
-
-	// f.Write([]byte("\n\n=> STOPPED BY SOLUTION FOUND"))
-
-	// f.Write([]byte(fmt.Sprintf("\n\nDEPTH %d:\n", depth)))
-
-	// go BuildDepthList(f, list[depth], solvedGrid, listChan)
-
-	// f.Write([]byte("\n\n=> STOPPED BY TIMEOUT"))
 }
