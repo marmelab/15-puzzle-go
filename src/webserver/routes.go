@@ -6,6 +6,7 @@ import (
 	"game"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type GridResponse struct {
@@ -31,6 +32,8 @@ func panicOnError(err error) {
 		panic(err)
 	}
 }
+
+const SUGGEST_DURATION time.Duration = 1
 
 func New(w http.ResponseWriter, r *http.Request) {
 	sizeString := r.URL.Query().Get("size")
@@ -77,7 +80,15 @@ func Suggest(w http.ResponseWriter, r *http.Request) {
 
 	grid := game.ConvertGridIntToGrid(gridInt)
 	initialGrid := game.ConvertGridIntToGrid(initialGridInt)
-	path, err := game.SolvePuzzle(grid, initialGrid)
+
+	timeout := make(chan bool, 1)
+
+	go func() {
+		time.Sleep(time.Second * SUGGEST_DURATION)
+		timeout <- true
+	}()
+
+	path, err := game.SolvePuzzle(grid, initialGrid, timeout)
 	panicOnError(err)
 
 	w.Header().Set("Content-Type", "application/json")
