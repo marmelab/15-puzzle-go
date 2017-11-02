@@ -7,8 +7,8 @@ import (
 const SHUFFLE_DURATION time.Duration = 50
 
 type ShuffleResult struct {
-	Grid  Grid
-	Count int
+	Grid       Grid
+	CountMoves int
 }
 
 func Shuffle(grid Grid) (Grid, int) {
@@ -21,12 +21,12 @@ func Shuffle(grid Grid) (Grid, int) {
 		var tileToMove Coords
 		gridShuffled := DeepCopyGrid(grid)
 		movableTiles, err := ListMovableTiles(gridShuffled)
-		count := 0
+		countMoves := 0
 
 		for {
 			select {
 			case <-timer.C:
-				shuffleChan <- ShuffleResult{gridShuffled, count}
+				shuffleChan <- ShuffleResult{gridShuffled, countMoves}
 				return
 			default:
 				if err != nil {
@@ -36,11 +36,11 @@ func Shuffle(grid Grid) (Grid, int) {
 				tileToMove = ChoiceCoordsNoSeed(movableTiles)
 				gridShuffled, _ = Move(gridShuffled, tileToMove)
 				movableTiles, err = ListMovableTilesWithoutGoingBack(gridShuffled, gridShuffled[tileToMove.Y][tileToMove.X])
-				count++
+				countMoves++
 			}
 		}
 	}()
 
 	result := <-shuffleChan
-	return result.Grid, result.Count
+	return result.Grid, result.CountMoves
 }

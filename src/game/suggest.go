@@ -187,7 +187,7 @@ func BuildDepthList(list []Node, solvedGrid Grid, listChan chan []Node, timeoutC
 	listChan <- sublist
 }
 
-func findGridResolvedInList(list []Node) (Node, error) {
+func findResolvedGridInList(list []Node) (Node, error) {
 	var node Node
 	for _, node = range list {
 		if node.Heuristic == 0 {
@@ -195,6 +195,14 @@ func findGridResolvedInList(list []Node) (Node, error) {
 		}
 	}
 	return node, errors.New("No solved grid found in list")
+}
+
+func buildInitialList(shuffledGrid Grid, solvedGrid Grid, possibleMoves []Coords) ([][]Node){
+	initialNode := Node{0, TaxicabWithValues(shuffledGrid, solvedGrid), shuffledGrid, make([]Coords, 0)}
+	list := make([][]Node, 0)
+	sublist := BuildNeighborList(initialNode, solvedGrid, possibleMoves)
+	list = append(list, sublist)
+	return list
 }
 
 func SolvePuzzleD(shuffledGrid Grid, solvedGrid Grid) ([]Coords, error) {
@@ -210,22 +218,17 @@ func SolvePuzzleDWithPreviousMove(shuffledGrid Grid, solvedGrid Grid, lastMove C
 }
 
 func solvePuzzleD(shuffledGrid Grid, solvedGrid Grid, possibleMoves []Coords) ([]Coords, error) {
-	initialNode := Node{0, TaxicabWithValues(shuffledGrid, solvedGrid), shuffledGrid, make([]Coords, 0)}
+	list := buildInitialList(shuffledGrid, solvedGrid, possibleMoves)
+	node, err := findResolvedGridInList(list[0])
+	if err == nil {
+		return node.Moves, nil
+	}
 
 	timeoutChan := make(chan bool, 1)
 	defer close(timeoutChan)
 	listChan := make(chan []Node, 1)
 	defer close(listChan)
 
-	list := make([][]Node, 0)
-
-	sublist := BuildNeighborList(initialNode, solvedGrid, possibleMoves)
-	node, err := findGridResolvedInList(sublist)
-	if err == nil {
-		return node.Moves, nil
-	}
-
-	list = append(list, sublist)
 	solved := false
 
 	go func() {
@@ -244,8 +247,8 @@ func solvePuzzleD(shuffledGrid Grid, solvedGrid Grid, possibleMoves []Coords) ([
 		case <-timeoutChan:
 			sortedList := SortListWithHeuristic(list[depth-1])
 			return sortedList[0].Moves, nil
-		case sublist = <-listChan:
-			node, err := findGridResolvedInList(sublist)
+		case sublist := <-listChan:
+			node, err := findResolvedGridInList(sublist)
 			if err == nil {
 				solved = true
 				return node.Moves, nil
