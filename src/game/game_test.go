@@ -37,6 +37,24 @@ func TestListMovableTiles(t *testing.T) {
 	}
 }
 
+func TestListMovableTiles2(t *testing.T) {
+	grid := Grid{
+		{1, 2, 3},
+		{4, 5, 0},
+		{7, 8, 6},
+	}
+	list, err := ListMovableTiles(grid)
+	expectedValue := grid[list[0].Y][list[0].X]
+	expectedValue2 := grid[list[1].Y][list[1].X]
+	expectedValue3 := grid[list[2].Y][list[2].X]
+	if expectedValue != 3 || expectedValue2 != 6 || expectedValue3 != 5 {
+		t.Error(fmt.Sprintf("The movable tiles should be 3, 6 and 5 and not %d, %d and %d", expectedValue, expectedValue2, expectedValue3))
+	}
+	if err != nil {
+		t.Error("The ListMovableTiles function should not return an error.")
+	}
+}
+
 func TestListMovableTilesError(t *testing.T) {
 	grid := Grid{
 		{1, 2, 3},
@@ -105,6 +123,28 @@ func TestMove(t *testing.T) {
 		{7, 8, 6},
 	}
 	coords := Coords{1, 2}
+	newGrid, err := Move(grid, coords)
+
+	if err != nil {
+		t.Error("The move should not return an error")
+	}
+	if !reflect.DeepEqual(newGrid, expectedGrid) {
+		t.Error("The grid should have changed")
+	}
+}
+
+func TestMove2(t *testing.T) {
+	expectedGrid := Grid{
+		{1, 2, 3},
+		{4, 5, 6},
+		{7, 8, 0},
+	}
+	grid := Grid{
+		{1, 2, 3},
+		{4, 5, 0},
+		{7, 8, 6},
+	}
+	coords := Coords{2, 2}
 	newGrid, err := Move(grid, coords)
 
 	if err != nil {
