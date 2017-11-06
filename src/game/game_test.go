@@ -20,6 +20,68 @@ func TestBuild(t *testing.T) {
 	}
 }
 
+func TestFindTileByValue(t *testing.T) {
+	grid := Grid{
+		{1, 2, 3},
+		{4, 0, 5},
+		{7, 8, 6},
+	}
+	value := byte(5)
+	expectedCoords := Coords{Y: 1, X: 2}
+	coords, err := FindTileByValue(grid, value)
+
+	if !reflect.DeepEqual(expectedCoords, coords) {
+		t.Error(fmt.Sprintf("The tile %d should be located at (%d, %d) and not (%d, %d).", value, expectedCoords.Y, expectedCoords.X, coords.Y, coords.X))
+	}
+	if err != nil {
+		t.Error("The method should not return an error")
+	}
+}
+
+func TestFindTileByValueFail(t *testing.T) {
+	grid := Grid{
+		{1, 2, 3},
+		{4, 0, 5},
+		{7, 8, 6},
+	}
+	value := byte(11)
+	_, err := FindTileByValue(grid, value)
+
+	if err == nil {
+		t.Error("The method should return an error")
+	}
+}
+
+func TestFindEmptyTile(t *testing.T) {
+	grid := Grid{
+		{1, 2, 3},
+		{4, 0, 5},
+		{7, 8, 6},
+	}
+	expectedCoords := Coords{Y: 1, X: 1}
+	coords, err := FindEmptyTile(grid)
+
+	if !reflect.DeepEqual(expectedCoords, coords) {
+		t.Error(fmt.Sprintf("The empty tile should be located at (%d, %d) and not (%d, %d).", expectedCoords.Y, expectedCoords.X, coords.Y, coords.X))
+	}
+	if err != nil {
+		t.Error("The method should not return an error")
+	}
+}
+
+func TestFindEmptyTileFail(t *testing.T) {
+	grid := Grid{
+		{1, 2, 3},
+		{4, 9, 5},
+		{7, 8, 6},
+	}
+	_, err := FindEmptyTile(grid)
+
+	if err == nil {
+		t.Error("The method should return an error")
+	}
+}
+
 func TestListMovableTiles(t *testing.T) {
 	grid := Grid{
 		{1, 2, 3},
