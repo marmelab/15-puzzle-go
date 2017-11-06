@@ -51,7 +51,7 @@ func DeepCopyGrid(grid Grid) Grid {
 	return newGrid
 }
 
-func findTileByValue(grid Grid, value byte) (Coords, error) {
+func FindTileByValue(grid Grid, value byte) (Coords, error) {
 	var tile Coords
 	size := byte(len(grid))
 	y := byte(0)
@@ -70,14 +70,14 @@ func findTileByValue(grid Grid, value byte) (Coords, error) {
 	return tile, errors.New("The grid does not contain this tile")
 }
 
-func findEmptyTile(grid Grid) (Coords, error) {
-	return findTileByValue(grid, EMPTY_VALUE)
+func FindEmptyTile(grid Grid) (Coords, error) {
+	return FindTileByValue(grid, EMPTY_VALUE)
 }
 
 func ListMovableTiles(grid Grid) ([]Coords, error) {
 	var coordsMovableTiles []Coords
 
-	coordsEmptyTile, err := findEmptyTile(grid)
+	coordsEmptyTile, err := FindEmptyTile(grid)
 	if err != nil {
 		return coordsMovableTiles, err
 	}
@@ -120,7 +120,7 @@ func ListMovableTilesWithoutGoingBack(grid Grid, previousMovedTile byte) ([]Coor
 func CoordsFromDirection(grid Grid, dir byte) (Coords, error) {
 	var coordsMovableTiles Coords
 
-	coordsEmptyTile, err := findEmptyTile(grid)
+	coordsEmptyTile, err := FindEmptyTile(grid)
 	if err != nil {
 		return coordsEmptyTile, err
 	}
@@ -168,7 +168,7 @@ func CoordsFromDirection(grid Grid, dir byte) (Coords, error) {
 }
 
 func DirectionFromCoords(grid Grid, coords Coords) (byte, error) {
-	coordsEmptyTile, err := findEmptyTile(grid)
+	coordsEmptyTile, err := FindEmptyTile(grid)
 	if err != nil {
 		return ACTION_NONE, err
 	}
@@ -214,12 +214,12 @@ func Move(grid Grid, coordsTileToMove Coords) (Grid, error) {
 		return grid, errors.New(fmt.Sprintf("The tile at coords (%d, %d) is not movable", coordsTileToMove.Y, coordsTileToMove.X))
 	}
 
-	emptyCoords, err := findEmptyTile(grid)
+	emptyCoords, err := FindEmptyTile(grid)
 	if err != nil {
 		return grid, err
 	}
 
-	newCoords, err := findTileByValue(grid, grid[coordsTileToMove.Y][coordsTileToMove.X])
+	newCoords, err := FindTileByValue(grid, grid[coordsTileToMove.Y][coordsTileToMove.X])
 	if err != nil {
 		return grid, err
 	}

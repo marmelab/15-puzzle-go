@@ -43,7 +43,7 @@ func Taxicab(grid Grid, grid2 Grid) int {
 		x := 0
 		for x < size {
 			if grid[y][x] != grid2[y][x] {
-				expectedPos, _ := findTileByValue(grid2, grid[y][x])
+				expectedPos, _ := FindTileByValue(grid2, grid[y][x])
 				sum += int(math.Abs(float64(y-int(expectedPos.Y))) + math.Abs(float64(x-int(expectedPos.X))))
 			}
 			x++
@@ -62,7 +62,7 @@ func TaxicabWithValues(grid Grid, grid2 Grid) int {
 		x := 0
 		for x < size {
 			if grid[y][x] != grid2[y][x] {
-				expectedPos, _ := findTileByValue(grid2, grid[y][x])
+				expectedPos, _ := FindTileByValue(grid2, grid[y][x])
 				sum += int(math.Abs(float64(y-int(expectedPos.Y))) + math.Abs(float64(x-int(expectedPos.X))))
 				sum += size*size - int(grid[y][x])
 			}
@@ -197,7 +197,7 @@ func findResolvedGridInList(list []Node) (Node, error) {
 	return node, errors.New("No solved grid found in list")
 }
 
-func buildInitialList(shuffledGrid Grid, solvedGrid Grid, possibleMoves []Coords) ([][]Node){
+func buildInitialList(shuffledGrid Grid, solvedGrid Grid, possibleMoves []Coords) [][]Node {
 	initialNode := Node{0, TaxicabWithValues(shuffledGrid, solvedGrid), shuffledGrid, make([]Coords, 0)}
 	list := make([][]Node, 0)
 	sublist := BuildNeighborList(initialNode, solvedGrid, possibleMoves)

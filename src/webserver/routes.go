@@ -10,12 +10,18 @@ import (
 )
 
 type GridResponse struct {
-	Grid [][]int
+	InitialGrid [][]int
+	Grid        [][]int
 }
 
 type MoveParams struct {
 	Grid [][]int
 	Move string
+}
+
+type MoveTileParams struct {
+	Grid       [][]int
+	TileNumber int
 }
 
 type SuggestParams struct {
@@ -45,9 +51,10 @@ func New(w http.ResponseWriter, r *http.Request) {
 		panicOnError(errors.New("The puzzle size must be between 2 and 10"))
 	}
 
-	grid := game.BuildGrid(byte(size))
+	initialGrid := game.BuildGrid(byte(size))
+	grid, _ := game.Shuffle(game.DeepCopyGrid(initialGrid))
 
-	json.NewEncoder(w).Encode(GridResponse{Grid: game.ConvertGridToGridInt(grid)})
+	json.NewEncoder(w).Encode(GridResponse{InitialGrid: game.ConvertGridToGridInt(initialGrid), Grid: game.ConvertGridToGridInt(grid)})
 }
 
 func Move(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +69,24 @@ func Move(w http.ResponseWriter, r *http.Request) {
 	panicOnError(err)
 
 	grid, err := game.Move(game.ConvertGridIntToGrid(moveParams.Grid), coords)
+	panicOnError(err)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(GridResponse{Grid: game.ConvertGridToGridInt(grid)})
+}
+
+func MoveTile(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	var moveTileParams MoveTileParams
+	err := decoder.Decode(&moveTileParams)
+	panicOnError(err)
+	defer r.Body.Close()
+
+	coords, err := game.FindTileByValue(game.ConvertGridIntToGrid(moveTileParams.Grid), byte(moveTileParams.TileNumber))
+	panicOnError(err)
+
+	grid, err := game.Move(game.ConvertGridIntToGrid(moveTileParams.Grid), coords)
 	panicOnError(err)
 
 	w.Header().Set("Content-Type", "application/json")
