@@ -10,6 +10,7 @@ import (
 )
 
 type GridResponse struct {
+	InitialGrid [][]int
 	Grid [][]int
 }
 
@@ -45,9 +46,10 @@ func New(w http.ResponseWriter, r *http.Request) {
 		panicOnError(errors.New("The puzzle size must be between 2 and 10"))
 	}
 
-	grid := game.BuildGrid(byte(size))
+	initialGrid := game.BuildGrid(byte(size))
+	grid, _ := game.Shuffle(game.DeepCopyGrid(initialGrid))
 
-	json.NewEncoder(w).Encode(GridResponse{Grid: game.ConvertGridToGridInt(grid)})
+	json.NewEncoder(w).Encode(GridResponse{InitialGrid: game.ConvertGridToGridInt(initialGrid), Grid: game.ConvertGridToGridInt(grid)})
 }
 
 func Move(w http.ResponseWriter, r *http.Request) {
