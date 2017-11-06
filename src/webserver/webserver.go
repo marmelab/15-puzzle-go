@@ -12,6 +12,7 @@ func Server(port int) {
 	r.Headers("Content-Type", "application/json")
 	r.HandleFunc("/new", New).Methods("GET")
 	r.HandleFunc("/move", Move).Methods("POST")
+	r.HandleFunc("/move-tile", MoveTile).Methods("POST")
 	r.HandleFunc("/suggest", Suggest).Methods("GET")
 
 	server := &http.Server{
