@@ -5,6 +5,7 @@ import (
 	"errors"
 	"game"
 	"net/http"
+	"reflect"
 	"strconv"
 	"time"
 )
@@ -15,13 +16,20 @@ type GridResponse struct {
 }
 
 type MoveParams struct {
-	Grid [][]int
-	Move string
+	InitialGrid [][]int
+	Grid        [][]int
+	Move        string
 }
 
 type MoveTileParams struct {
-	Grid       [][]int
-	TileNumber int
+	InitialGrid [][]int
+	Grid        [][]int
+	TileNumber  int
+}
+
+type MoveResponse struct {
+	Grid      [][]int
+	IsVictory bool
 }
 
 type SuggestParams struct {
@@ -71,8 +79,10 @@ func Move(w http.ResponseWriter, r *http.Request) {
 	grid, err := game.Move(game.ConvertGridIntToGrid(moveParams.Grid), coords)
 	panicOnError(err)
 
+	victory := reflect.DeepEqual(moveParams.Grid, moveParams.InitialGrid)
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(GridResponse{Grid: game.ConvertGridToGridInt(grid)})
+	json.NewEncoder(w).Encode(MoveResponse{Grid: game.ConvertGridToGridInt(grid), IsVictory: victory})
 }
 
 func MoveTile(w http.ResponseWriter, r *http.Request) {
@@ -89,8 +99,11 @@ func MoveTile(w http.ResponseWriter, r *http.Request) {
 	grid, err := game.Move(game.ConvertGridIntToGrid(moveTileParams.Grid), coords)
 	panicOnError(err)
 
+	gridInt := game.ConvertGridToGridInt(grid)
+	victory := reflect.DeepEqual(gridInt, moveTileParams.InitialGrid)
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(GridResponse{Grid: game.ConvertGridToGridInt(grid)})
+	json.NewEncoder(w).Encode(MoveResponse{Grid: gridInt, IsVictory: victory})
 }
 
 func Suggest(w http.ResponseWriter, r *http.Request) {
