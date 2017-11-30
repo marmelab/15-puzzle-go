@@ -12,10 +12,7 @@ func getPort() int {
 	var port int
 	flag.IntVar(&port, "port", DEFAULT_WEBSERVER_PORT, "Port on which application should listen")
 	flag.Parse()
-	if port > 2000 && port < 3000 {
-		return port
-	}
-	return DEFAULT_WEBSERVER_PORT
+	return port
 }
 
 func main() {
