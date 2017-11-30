@@ -38,7 +38,7 @@ type SuggestParams struct {
 }
 
 type SuggestResponse struct {
-	Move string
+	Tile int
 }
 
 func panicOnError(err error) {
@@ -119,22 +119,16 @@ func Suggest(w http.ResponseWriter, r *http.Request) {
 	grid := game.ConvertGridIntToGrid(gridInt)
 	initialGrid := game.ConvertGridIntToGrid(initialGridInt)
 
-	timeout := make(chan bool, 1)
-
-	go func() {
-		time.Sleep(time.Second * SUGGEST_DURATION)
-		timeout <- true
-	}()
-
-	path, err := game.SolvePuzzle(grid, initialGrid, timeout)
+	path, err := game.SolvePuzzleD(grid, initialGrid)
 	panicOnError(err)
 
 	w.Header().Set("Content-Type", "application/json")
 
 	if len(path) > 0 {
-		dir, err := game.DirectionFromCoords(grid, path[0])
-		panicOnError(err)
-		json.NewEncoder(w).Encode(game.ConvertMoveToMoveString(dir))
+		tileCoords := path[0]
+		tile := grid[tileCoords.Y][tileCoords.X]
+
+		json.NewEncoder(w).Encode(SuggestResponse{Tile: int(tile)})
 		return
 	}
 	w.WriteHeader(http.StatusNotFound)
