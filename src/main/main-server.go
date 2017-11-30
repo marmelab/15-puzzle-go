@@ -2,12 +2,21 @@ package main
 
 import (
 	"fmt"
+	"flag"
 	"webserver"
 )
 
 const DEFAULT_WEBSERVER_PORT int = 2000
 
+func getPort() int {
+	var port int
+	flag.IntVar(&port, "port", DEFAULT_WEBSERVER_PORT, "Port on which application should listen")
+	flag.Parse()
+	return port
+}
+
 func main() {
-	fmt.Printf("Starting the server at port %d\n", DEFAULT_WEBSERVER_PORT)
-	webserver.Server(DEFAULT_WEBSERVER_PORT)
+	port := getPort()
+	fmt.Printf("Starting the server at port %d\n", port)
+	webserver.Server(port)
 }

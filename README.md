@@ -1,16 +1,8 @@
 # 15-puzzle-go
 
-A CLI tool to play the 15-puzzle game, in Go.
+A CLI tool to play the 15 puzzle game, in Go.
 
-## Contributing
-
-### Help
-
-Print all available commands
-
-``` bash
-make
-```
+## Run the project
 
 ### Install
 
@@ -30,7 +22,8 @@ make run
 
 Note: you can use en environment variable `SIZE` to define the puzzle size
 
-For example with a size equals to 5
+For example with a size equals to 5:
+
 ``` bash
 SIZE=5 make run
 ```
@@ -43,7 +36,23 @@ Run the 15-puzzle webserver at port 2000
 make run-server
 ```
 
-### Run the tests
+Note: you can use en environment variable `PORT` to define the port (from 2000 to 3000)
+
+``` bash
+PORT=2017 make run
+```
+
+## Contributing
+
+### Help
+
+Print all available commands
+
+``` bash
+make
+```
+
+### Test
 
 Run all tests
 
@@ -51,7 +60,7 @@ Run all tests
 make test
 ```
 
-### Run the linter
+### Linter
 
 Run the gofmt linter
 
