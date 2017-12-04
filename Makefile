@@ -17,14 +17,15 @@ help: ## Print all commands (default)
 ####### BUILD #######
 
 build-docker: ## Build the dev docker
+ifeq ($(ENV), prod)
+	docker build -f $(DOCKERFILE_NAME_PROD) -t $(REPOSITORY_NAME_PROD)/$(CONTAINER_NAME_PROD) .
+else
 	docker build -t $(CONTAINER_NAME) .
+endif
 
 install: build-docker ## Build the dev docker (alias for `build-docker`)
 
-build-docker-prod: ## Build the prod docker
-	docker build -f $(DOCKERFILE_NAME_PROD) -t $(REPOSITORY_NAME_PROD)/$(CONTAINER_NAME_PROD) .
-
-install-prod: build-docker-prod ## Build the prod docker (alias for `build-docker-prod`)
+install-prod: build-docker-prod ## Build the prod docker (alias for `build-docker` with prod env)
 
 publish: build-docker-prod ## Publish the docker in the dockerhub. Be careful, you should be logged before!
 	docker push $(REPOSITORY_NAME_PROD)/$(CONTAINER_NAME_PROD)
@@ -32,18 +33,18 @@ publish: build-docker-prod ## Publish the docker in the dockerhub. Be careful, y
 ####### RUN #######
 
 run: ## Run the 15-puzzle game with the env variable SIZE as parameter
+ifeq ($(ENV), prod)
+	$(DOCKER_PROD) go run main/main.go --size=$(SIZE)
+else
 	$(DOCKER) go run main/main.go --size=$(SIZE)
+endif
 
 run-server: ## Run the 15-puzzle webserver at port (default: 2000)
+ifeq ($(ENV), prod)
+	$(DOCKER_WEBSERVER_PROD) go run main/main-server.go  --port=$(PORT)
+else
 	$(DOCKER_WEBSERVER) go run main/main-server.go  --port=$(PORT)
-
-####### DEV #######
-
-run-prod: ## Run the 15-puzzle game with the env variable SIZE as parameter
-	$(DOCKER) go run main/main.go --size=$(SIZE)
-
-run-server-prod: ## Run the 15-puzzle webserver at port 2000
-	$(DOCKER_WEBSERVER) go run main/main-server.go
+endif
 
 ####### DEV #######
 

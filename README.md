@@ -39,22 +39,23 @@ make publish
 
 ## Run the project
 
-### Run the game
+### Run the CLI game
 
 Run the 15-puzzle game in dev or prod mode
 
 ``` bash
 make run
-make run-prod
 ```
 
-_Note: you can use en environment variable `SIZE` to define the puzzle size_
+Note:
+
+- you can use the environment variable `ENV` to define the running env
+- you can use the environment variable `SIZE` to define the puzzle size
 
 For example with a size equals to 5:
 
 ``` bash
-SIZE=5 make run
-SIZE=5 make run-prod
+ENV=prod SIZE=5 make run
 ```
 
 ### Run the webserver
@@ -63,13 +64,15 @@ Run the 15-puzzle webserver at port 2000 in dev or prod mode
 
 ``` bash
 make run-server
-make run-server-prod
 ```
 
-Note: you can use en environment variable `PORT` to define the port (from 2000 to 3000)
+Note:
+
+- you can use en environment variable `ENV` to define the running env
+- you can use en environment variable `PORT` to define the port (from 2000 to 3000)
 
 ``` bash
-PORT=2017 make run
+ENV=prod PORT=2017 make run-server
 ```
 
 ## Contributing
