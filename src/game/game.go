@@ -103,16 +103,10 @@ func ListMovableTilesWithoutGoingBack(grid Grid, previousMovedTile byte) ([]Coor
 	if err != nil {
 		return movableTiles, err
 	}
-
-	indexToRemove := -1
 	for index, coords := range movableTiles {
 		if grid[coords.Y][coords.X] == previousMovedTile {
-			indexToRemove = index
-			break
+			return append(movableTiles[:index], movableTiles[index+1:]...), nil
 		}
-	}
-	if indexToRemove >= 0 {
-		movableTiles = movableTiles[:indexToRemove]
 	}
 	return movableTiles, nil
 }
