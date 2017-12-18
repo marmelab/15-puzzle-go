@@ -21,6 +21,10 @@ func CountMisplacedTiles(grid Grid, grid2 Grid) int {
 	return sum
 }
 
+func Distance(y int, goalY int, x int, goalX int) int {
+	return int(math.Abs(float64(y-goalY)) + math.Abs(float64(x-int(goalX))))
+}
+
 func Taxicab(grid Grid, grid2 Grid) int {
 	sum := 0
 	size := len(grid)
@@ -72,15 +76,23 @@ func TaxicabWithLinearConflict(grid Grid, grid2 Grid) int {
 			expectedValue := grid2[y][x]
 			if currentValue != expectedValue {
 				expectedPos, _ := FindTileByValue(grid2, currentValue)
-				sum += int(math.Abs(float64(y-int(expectedPos.Y))) + math.Abs(float64(x-int(expectedPos.X))))
-				sum += size*size - int(currentValue)
+				sum += size*size + Distance(y, int(expectedPos.Y), x, int(expectedPos.X)) * int(currentValue)
+			} else {
+				sum += int(currentValue)
 			}
 			if x+1 < size {
-				followingValue := grid[y][x+1]
-				if currentValue > followingValue {
+				followingXValue := grid[y][x+1]
+				if followingXValue != 0 && currentValue > followingXValue {
 					sum += 2
 				}
 			}
+			if y+1 < size {
+				followingYValue := grid[y+1][x]
+				if  followingYValue != 0 && currentValue > followingYValue {
+					sum += 2
+				}
+			}
+
 			x++
 		}
 		y++

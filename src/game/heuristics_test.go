@@ -43,6 +43,20 @@ func TestCountMisplacedTiles(t *testing.T) {
 	}
 }
 
+func TestDistance(t *testing.T) {
+	y:= 23
+	goalY := 56
+	x:= 67
+	goalX := 34
+
+	distance := Distance(y, goalY, x, goalX)
+	expectedDistance := 66
+
+	if distance != expectedDistance {
+		t.Error(fmt.Sprintf("The distance should be equals to %d and not %d", distance, expectedDistance))
+	}
+}
+
 func TestTaxicabIdenticalGrids(t *testing.T) {
 	startedGrid := Grid{
 		{1, 2, 3},
