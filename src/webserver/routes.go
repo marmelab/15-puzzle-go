@@ -49,6 +49,10 @@ func panicOnError(err error) {
 
 const SUGGEST_DURATION time.Duration = 1
 
+func Options(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+}
+
 func New(w http.ResponseWriter, r *http.Request) {
 	sizeString := r.URL.Query().Get("size")
 
