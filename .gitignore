@@ -15,3 +15,6 @@
 
 # Ignore the dependencies
 src/github.com
+
+# Ignore the logs
+*.log
