@@ -8,6 +8,7 @@ import (
 
 func WriteStringToFile(filepath, s string) error {
 	fo, err := os.Create(filepath)
+
 	if err != nil {
 		return err
 	}
