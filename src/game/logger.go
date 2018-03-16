@@ -7,7 +7,7 @@ import (
 
 func LogList(fileName string, list []Node) {
 	var listStr string
-	listStr += fmt.Sprintf("List of 1000 first elements")
+	listStr += fmt.Sprintf("List of 1000 first elements in %d explored", len(list))
 
 	for i, node := range list {
 		if i > 1000 {
