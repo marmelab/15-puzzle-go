@@ -2,11 +2,13 @@
 
 A CLI tool to play the 15 puzzle game, in Go.
 
+> See the [related article](https://marmelab.com/blog/2017/12/01/jeu-du-taquin-en-go.html) on the Marmelab blog
+
 ## Help
 
 Print all available commands
 
-``` bash
+```bash
 make
 ```
 
@@ -16,7 +18,7 @@ make
 
 Install the dependencies, compile the code and build the docker
 
-``` bash
+```bash
 make install
 ```
 
@@ -24,7 +26,7 @@ make install
 
 Install the dependencies, compile the code and build the docker in production mode
 
-``` bash
+```bash
 make install-prod
 ```
 
@@ -33,7 +35,7 @@ make install-prod
 Publish the docker in the docker hub [15-puzzle-api](https://hub.docker.com/r/luwangel/15-puzzle-api/).
 _Note: be careful, you should be logged before!_
 
-``` bash
+```bash
 make publish
 ```
 
@@ -43,18 +45,18 @@ make publish
 
 Run the 15-puzzle game in dev or prod mode
 
-``` bash
+```bash
 make run
 ```
 
 Note:
 
-- you can use the environment variable `ENV` to define the running env
-- you can use the environment variable `SIZE` to define the puzzle size
+*   you can use the environment variable `ENV` to define the running env
+*   you can use the environment variable `SIZE` to define the puzzle size
 
 For example with a size equals to 5:
 
-``` bash
+```bash
 ENV=prod SIZE=5 make run
 ```
 
@@ -62,16 +64,16 @@ ENV=prod SIZE=5 make run
 
 Run the 15-puzzle webserver at port 2000 in dev or prod mode
 
-``` bash
+```bash
 make run-server
 ```
 
 Note:
 
-- you can use en environment variable `ENV` to define the running env
-- you can use en environment variable `PORT` to define the port (from 2000 to 3000)
+*   you can use en environment variable `ENV` to define the running env
+*   you can use en environment variable `PORT` to define the port (from 2000 to 3000)
 
-``` bash
+```bash
 ENV=prod PORT=2017 make run-server
 ```
 
